@@ -14,13 +14,13 @@ fetch("http://localhost:3000/api/products")
 
 function displayProducts(data) {
 
-    data.forEach((couch) => {        
+    data.forEach((product) => {        
         
-        const _id = couch._id
-        const imageUrl = couch.imageUrl
-        const altTxt = couch.altTxt
-        const name = couch.name
-        const description = couch.description
+        const _id = product._id
+        const imageUrl = product.imageUrl
+        const altTxt = product.altTxt
+        const name = product.name
+        const description = product.description
         // const {_id, imageUrl, altTxt, name, description} = couch
         
         const anchor = makeAnchor(_id)
