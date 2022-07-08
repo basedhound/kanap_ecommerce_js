@@ -16,13 +16,43 @@ function displayItem(product) {
     article.appendChild(cartItemContent)
     
     displayArticle(article)
+    displayTotalPrice(product)
     displayTotalQuantity(product)
+}
+
+function displayTotalPrice(product) {
+    const totalPrice = document.querySelector("#totalPrice")
+    
+    // Méthode 1
+    let total = 0
+    cart.forEach((product) => {
+        const totalUnitPrice = product.price * product.quantity
+        total += totalUnitPrice
+    })
+    
+    // Méthode 2
+    // const total = cart.reduce((total, product) => total + product.price * product.quantity, 0)
+
+    totalPrice.textContent = total
 }
 
 function displayTotalQuantity(product) {
     const totalQuantity = document.querySelector("#totalQuantity")
-    totalQuantity.textContent = product.quantity 
+
+    // Méthode 1
+    let total = 0
+    cart.forEach((product) => {
+        const totalQuantity = product.quantity
+        total += totalQuantity
+    })
+
+    // Méthode 2
+    // const total = cart.reduce((total, product) => total + product.quantity, 0)
+    
+    totalQuantity.textContent = total
 }
+
+
 
 
 
@@ -116,7 +146,7 @@ function addQuantityToSettings(settings, product) {
     settings.appendChild(quantity)
 
 }
-
+ 
 
 
 
