@@ -9,7 +9,6 @@ fetch("http://localhost:3000/api/products")
 // 2. Ces données sont converties en .json
 // 3. Ces données sont transmises à "getProducts"
 
-
 //! Créer les éléments HTML depuis le script JS
 
 function displayProducts(data) {
