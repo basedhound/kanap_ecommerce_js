@@ -48,7 +48,6 @@ function hydratePage(product) {
     })
 }
 
-
 function addProductToCart(product) {
     const button = document.getElementById('addToCart')
     button.addEventListener("click", (e) => {
@@ -67,7 +66,7 @@ function addProductToCart(product) {
         if (OrderIsInvalid(color, quantity)) return
 
         let localStorageContent = JSON.parse(localStorage.getItem("Cart"))
-
+          
         // Fenêtre pop-up de confirmation d'ajout au panier
         const purchaseConfirmation = () => {
             if (window.confirm(`${product.name} option: ${purchase.color} a bien été ajouté au panier !
@@ -79,29 +78,43 @@ function addProductToCart(product) {
             }
         }
 
-        // Si il y a déjà des produits enregistrés dans le local storage
-        if (localStorageContent) {
-            localStorageContent.push(purchase)
-            localStorage.setItem("Cart", JSON.stringify(localStorageContent))
-            purchaseConfirmation()
-        }
-
-        // Si il n'y a pas de produit enregistré dans local storage
-        else {
+        if (localStorageContent == null) {
             localStorageContent = []
             localStorageContent.push(purchase)
             localStorage.setItem("Cart", JSON.stringify(localStorageContent))
             purchaseConfirmation()
+        } else if (localStorageContent != null) {
+            for (i = 0; i < localStorageContent.length; i++) {                
+                if (
+                    localStorageContent[i].id == product._id &&
+                    localStorageContent[i].color == color
+                ) {
+                    return (
+                        localStorageContent[i].quantity++,                        
+                        localStorage.setItem("Cart", JSON.stringify(localStorageContent)),
+                        (localStorageContent = JSON.parse(localStorage.getItem("Cart"))),
+                        purchaseConfirmation()
+                    );            
+                }
+            }
+            for (i = 0; i < localStorageContent.length; i++) { 
+                if (localStorageContent[i].id == product._id && 
+                    localStorageContent[i].color != color || 
+                    localStorageContent[i].id != product._id
+                    ) {
+                    return (console.log("new"),
+                    localStorageContent.push(purchase),
+                    localStorage.setItem("Cart", JSON.stringify(localStorageContent)),
+                    (localStorageContent = JSON.parse(localStorage.getItem("Cart"))),
+                    purchaseConfirmation()
+                    )                     
+                }
+            }             
         }
 
     })
+    return (localStorageContent = JSON.parse(localStorage.getItem("Cart")))
 }
-
-
-
-
-
-
 
 
 
@@ -114,4 +127,7 @@ function OrderIsInvalid(color, quantity) {
         return true
     }
 }
+
+
+
 
