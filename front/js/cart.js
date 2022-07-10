@@ -2,19 +2,24 @@
 
 const cartStrings = localStorage.getItem("Cart")
 const cart = JSON.parse(cartStrings)
-console.log(cart)
- 
+// console.log(cart)
+
 cart.forEach((product) => displayItem(product))
 
 
+// Formulaire de commande
+const orderButton = document.querySelector("#order")
+orderButton.addEventListener("click", (e) => submitForm(e))
+
+
 function displayItem(product) {
-    const article = makeArticle(product)    
+    const article = makeArticle(product)
     const cartItemImg = makeItemImg(product)
     article.appendChild(cartItemImg)
-    
+
     const cartItemContent = makeItemContent(product)
     article.appendChild(cartItemContent)
-    
+
     displayArticle(article)
     displayTotalPrice(product)
     displayTotalQuantity(product)
@@ -22,14 +27,14 @@ function displayItem(product) {
 
 function displayTotalPrice(product) {
     const totalPrice = document.querySelector("#totalPrice")
-    
+
     // Méthode 1
     let total = 0
     cart.forEach((product) => {
         const totalUnitPrice = product.price * product.quantity
         total += totalUnitPrice
     })
-    
+
     // Méthode 2
     // const total = cart.reduce((total, product) => total + product.price * product.quantity, 0)
 
@@ -48,7 +53,7 @@ function displayTotalQuantity(product) {
 
     // Méthode 2
     // const total = cart.reduce((total, product) => total + product.quantity, 0)
-    
+
     totalQuantity.textContent = total
 }
 
@@ -103,9 +108,9 @@ function makeItemDescription(product) {
     const p2 = document.createElement("p")
     p2.textContent = product.price + " €"
 
-    description.appendChild (h2, p, p2)
-    description.appendChild (p)
-    description.appendChild (p2)
+    description.appendChild(h2, p, p2)
+    description.appendChild(p)
+    description.appendChild(p2)
 
     return description
 }
@@ -143,34 +148,72 @@ function addQuantityToSettings(settings, product) {
     input.value = product.quantity
     // Update Quantity & Price
     input.addEventListener("input", () => updateQuantityAndTotal(product, product.id, input.value))
-    
+
     quantity.appendChild(input)
     settings.appendChild(quantity)
 
 }
- 
-function updateQuantityAndTotal(product, id, newValue) {
-const itemToUpdate = cart.find((product) => product.id === id)
-itemToUpdate.quantity = Number(newValue)
 
-displayTotalQuantity()
-displayTotalPrice()
-saveNewDataToCache(product)
+function updateQuantityAndTotal(product, id, newValue) {
+    const itemToUpdate = cart.find((product) => product.id === id)
+    itemToUpdate.quantity = Number(newValue)
+
+    displayTotalQuantity()
+    displayTotalPrice()
+    saveNewDataToCache(product)
 }
 
 
 
 
-// function saveNewDataToCache(product) {    
-//     let localStorageContent = JSON.parse(localStorage.getItem("Cart"))
 
-  
-//         localStorageContent.push(product)
-//         localStorage.setItem("Cart", JSON.stringify(localStorageContent))
-    
-// }
+// ======================
+// Formulaire de commande
+// ======================
+function submitForm(e) {
+    e.preventDefault()
+    // if (cart.length == 0) alert("Votre panier est vide")
+    const body = makeRequestBody()
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
+    // console.log(form.elements)
+}
 
+function makeRequestBody() {
+    const form = document.querySelector(".cart__order__form")
 
+    const firstName = form.elements.firstName.value
+    const lastName = form.elements.lastName.value
+    const address = form.elements.address.value
+    const city = form.elements.city.value
+    const email = form.elements.email.value
 
+    const body = {
+        contact: {
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            email: email
+        },
+        products: getIds(cart)
+    }
+    // console.log(body)
+    return body
+}
 
-
+//Get only id of products
+function getIds(cart) {
+    let products = []
+    for (i = 0; i < cart.length; i++) {
+        products.push(cart[i].id)
+    }
+    return products
+}
