@@ -8,8 +8,8 @@ cart.forEach((product) => displayItem(product))
 
 
 // Formulaire de commande
-const orderButton = document.querySelector("#order")
-orderButton.addEventListener("click", (e) => submitForm(e))
+// const orderButton = document.querySelector("#order")
+// orderButton.addEventListener("click", (e) => submitForm(e))
 
 
 function displayItem(product) {
@@ -22,7 +22,8 @@ function displayItem(product) {
 
     displayArticle(article)
     displayTotalPrice(product)
-    displayTotalQuantity(product)
+    displayTotalQuantity(product)   
+   
 }
 
 function displayTotalPrice(product) {
@@ -56,6 +57,10 @@ function displayTotalQuantity(product) {
 
     totalQuantity.textContent = total
 }
+
+
+
+
 
 
 
@@ -160,60 +165,244 @@ function updateQuantityAndTotal(product, id, newValue) {
 
     displayTotalQuantity()
     displayTotalPrice()
-    saveNewDataToCache(product)
+    // saveNewDataToCache(product)
 }
 
 
 
+//* ======================
+//* VALIDITÉ DU FORMULAIRE
+//* ======================
+
+const firstName = document.querySelector("#firstName");
+const lastName = document.querySelector("#lastName");
+const address = document.querySelector("#address");
+const city = document.querySelector("#city");
+const email = document.querySelector("#email");
+
+let valueFirstName, valueLastName, valueAddress, valueCity, valueEmail;
+
+// ! FIRSTNAME
+firstName.addEventListener("input", function (e) {
+    valueFirstName;
+    if (e.target.value.length == 0) {
+        firstNameErrorMsg.innerHTML = "Ce champ est obligatoire"
+        valueFirstName = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 25) {
+        firstNameErrorMsg.innerHTML = "Prénom doit contenir entre 3 et 25 caractères"
+        valueFirstName = null
+    }
+    if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
+        firstNameErrorMsg.innerHTML = ""
+        valueFirstName = e.target.value
+    }
+    if (
+        // ! = different
+        !e.target.value.match(/^[a-z A-Z]{3,25}$/)
+        && e.target.value.length > 3
+        && e.target.value.length < 25
+    ) {
+        firstNameErrorMsg.innerHTML = "Prenom  ne doit pas contenir de caractères spéciaux et/ou d'accents"
+        valueFirstName = null
+    }
+});
+
+// ! LASTNAME
+lastName.addEventListener("input", function (e) {
+    valueLastName;
+    if (e.target.value.length == 0) {
+        lastNameErrorMsg.innerHTML = "Ce champ est obligatoire"
+        valueLastName = null
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 25) {
+        lastNameErrorMsg.innerHTML = "Nom doit contenir entre 3 et 25 caractères"
+        valueLastName = null
+    }
+    if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
+        lastNameErrorMsg.innerHTML = ""
+        valueLastName = e.target.value
+    }
+    if (
+        // ! = different
+        !e.target.value.match(/^[a-z A-Z]{3,25}$/)
+        && e.target.value.length > 3
+        && e.target.value.length < 25
+    ) {
+        lastNameErrorMsg.innerHTML = "Nom ne doit pas contenir de caractères spéciaux et/ou d'accents"
+        valueLastName = null
+    }
+});
+
+// ! ADDRESS
+address.addEventListener("input", function (e) {
+    valueAddress;
+    if (e.target.value.length == 0) {
+        addressErrorMsg.innerHTML = "Ce champ est obligatoire"
+        valueAddress = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 35) {
+        addressErrorMsg.innerHTML = "Adresse doit contenir entre 3 et 35 caractères"
+        valueAddress = null
+    }
+    if (e.target.value.match(/^[0-9]{1,3} [a-z A-Z]{3,35}$/)) {
+        addressErrorMsg.innerHTML = ""
+        valueAddress = e.target.value
+    }
+    if (
+        // ! = different
+        !e.target.value.match(/^[0-9]{1,3} [a-z A-Z]{3,35}$/)
+        && e.target.value.length > 3
+        && e.target.value.length < 35
+    ) {
+        addressErrorMsg.innerHTML = "Adresse commence par des chiffres, ne contient ni caractères spéciaux, ni accents"
+        valueAddress = null
+    }
+});
+
+// ! CITY
+city.addEventListener("input", function (e) {
+    valueCity;
+    if (e.target.value.length == 0) {
+        cityErrorMsg.innerHTML = "Ce champ est obligatoire"
+        valueCity = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 25) {
+        cityErrorMsg.innerHTML = "Ville doit contenir entre 3 et 25 caractères"
+        valueCity = null
+    }
+    if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
+        cityErrorMsg.innerHTML = ""
+        valueCity = e.target.value
+    }
+    if (
+        // ! = different
+        !e.target.value.match(/^[a-z A-Z]{3,25}$/)
+        && e.target.value.length > 3
+        && e.target.value.length < 25
+    ) {
+        cityErrorMsg.innerHTML = "Ville ne contient ni chiffres, ni caractères spéciaux, ni accents"
+        valueCity = null
+    }
+});
+
+email.addEventListener("input", (e) => {
+    if (e.target.value.length == 0) {
+        emailErrorMsg.innerHTML = "Ce champ est obligatoire"
+        valueEmail = null
+    }
+    else if (e.target.value.match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/)) {
+        emailErrorMsg.innerHTML = ""
+        valueEmail = e.target.value
+    }
+    if (!e.target.value.match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/)
+        && !e.target.value.length == 0) {
+        emailErrorMsg.innerHTML = "Adresse email invalide (Ex : moi@exemple.com)"
+        valueEmail = null
+    }
+});
 
 
-// ======================
-// Formulaire de commande
-// ======================
-function submitForm(e) {
+const orderForm = document.querySelector(".cart__order__form")
+orderForm.addEventListener("submit", (e) => {
     e.preventDefault()
-    // if (cart.length == 0) alert("Votre panier est vide")
-    const body = makeRequestBody()
-    fetch("http://localhost:3000/api/products/order", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": "application/json",
+    // console.log("stop")
+
+    if (valueFirstName && valueLastName && valueAddress && valueCity && valueEmail) {         
+        const orderComplete = JSON.parse(localStorage.getItem("Cart"))
+        let productsIds = []
+
+        orderComplete.forEach((product) => {
+            productsIds.push(product.id)
+        })
+
+        // console.log(orderId)
+
+        const orderData = {
+            contact: {
+                firstName: valueFirstName,
+                lastName: valueLastName,
+                address: valueAddress,
+                city: valueCity,
+                email: valueEmail
+            },
+            products: productsIds
         }
-    })
-        .then((res) => res.json())
-        .then((data) => console.log(data))
-    // console.log(form.elements)
-}
+        // console.log(orderData)
 
-function makeRequestBody() {
-    const form = document.querySelector(".cart__order__form")
+        //! ===============================================================
+        //! Envoyer l'objet "orderData" à l'API pour obtenir ID de commande
+        //! ===============================================================
+        fetch("http://localhost:3000/api/products/order", {
+            method: "POST",
+            body: JSON.stringify(orderData),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+            .then( async (res) => res.json())
+            .then( async (data) => {
+                console.log(data)
+                const orderId = data.orderId                
+                window.location.href = "./confirmation.html" + "?orderId=" + orderId
+            })
+            .catch((err) => console.log(err))
+        //! ===============================================================
 
-    const firstName = form.elements.firstName.value
-    const lastName = form.elements.lastName.value
-    const address = form.elements.address.value
-    const city = form.elements.city.value
-    const email = form.elements.email.value
-
-    const body = {
-        contact: {
-            firstName: firstName,
-            lastName: lastName,
-            address: address,
-            city: city,
-            email: email
-        },
-        products: getIds(cart)
+    } else {
+        e.preventDefault()
+        console.log("Champs invalides")
+        alert("Le formulaire n'est pas correctement rempli, veuillez réessayer.")
     }
-    // console.log(body)
-    return body
-}
+})
 
-//Get only id of products
-function getIds(cart) {
-    let products = []
-    for (i = 0; i < cart.length; i++) {
-        products.push(cart[i].id)
-    }
-    return products
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//* ================================
+//* OBJET À ENVOYER À L'API (BENOIT)
+//* ================================
+//     function makeRequestBody() {
+//     const form = document.querySelector(".cart__order__form")
+
+//     const firstName = form.elements.firstName.value
+//     const lastName = form.elements.lastName.value
+//     const address = form.elements.address.value
+//     const city = form.elements.city.value
+//     const email = form.elements.email.value
+
+//     const body = {
+//         contact: {
+//             firstName: firstName,
+//             lastName: lastName,
+//             address: address,
+//             city: city,
+//             email: email
+//         },
+//         products: getIds(cart)
+//     }
+//     // console.log(body)
+//     return body
+// }
+
+
+//* ===========================
+//* RÉCUPÉRER LES IDs DU PANIER
+//* ===========================
+// function getIds(cart) {
+//     let products = []
+//     for (i = 0; i < cart.length; i++) {
+//         products.push(cart[i].id)
+//     }
+//     return products
+// }
