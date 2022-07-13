@@ -3,7 +3,6 @@
 const cartStrings = localStorage.getItem("Cart")
 const cart = JSON.parse(cartStrings)
 // console.log(cart)
-
 cart.forEach((product) => displayItem(product))
 
 
@@ -25,47 +24,6 @@ function displayItem(product) {
     displayTotalQuantity(product)   
    
 }
-
-function displayTotalPrice(product) {
-    const totalPrice = document.querySelector("#totalPrice")
-
-    // Méthode 1
-    let total = 0
-    cart.forEach((product) => {
-        const totalUnitPrice = product.price * product.quantity
-        total += totalUnitPrice
-    })
-
-    // Méthode 2
-    // const total = cart.reduce((total, product) => total + product.price * product.quantity, 0)
-
-    totalPrice.textContent = total
-}
-
-function displayTotalQuantity(product) {
-    const totalQuantity = document.querySelector("#totalQuantity")
-
-    // Méthode 1
-    let total = 0
-    cart.forEach((product) => {
-        const totalQuantity = product.quantity
-        total += totalQuantity
-    })
-
-    // Méthode 2
-    // const total = cart.reduce((total, product) => total + product.quantity, 0)
-
-    totalQuantity.textContent = total
-}
-
-
-
-
-
-
-
-
-
 
 function displayArticle(article) {
     document.querySelector("#cart__items").appendChild(article)
@@ -156,19 +114,75 @@ function addQuantityToSettings(settings, product) {
 
     quantity.appendChild(input)
     settings.appendChild(quantity)
-
 }
 
 function updateQuantityAndTotal(product, id, newValue) {
     const itemToUpdate = cart.find((product) => product.id === id)
     itemToUpdate.quantity = Number(newValue)
-
     displayTotalQuantity()
     displayTotalPrice()
-    // saveNewDataToCache(product)
+    saveNewDataToCache(product)
+}
+
+function saveNewDataToCache(product) {
+    const dataToSave = JSON.stringify(product)
+    console.log(dataToSave)
+
+}
+
+function displayTotalPrice(product) {
+    const totalPrice = document.querySelector("#totalPrice")
+    // Méthode 1
+    let total = 0
+    cart.forEach((product) => {
+        const totalUnitPrice = product.price * product.quantity
+        total += totalUnitPrice
+    })
+    // Méthode 2
+    // const total = cart.reduce((total, product) => total + product.price * product.quantity, 0)
+    totalPrice.textContent = total
+}
+
+function displayTotalQuantity(product) {
+    const totalQuantity = document.querySelector("#totalQuantity")
+    // Méthode 1
+    let total = 0
+    cart.forEach((product) => {
+        const totalQuantity = product.quantity
+        total += totalQuantity
+    })
+    // Méthode 2
+    // const total = cart.reduce((total, product) => total + product.quantity, 0)
+    totalQuantity.textContent = total
 }
 
 
+
+function saveNewDataToCache(product) {
+    // const dataToSave = JSON.stringify(product)
+    // console.log("dataToSave", dataToSave)
+    // localStorage.setItem(product.id, dataToSave)
+
+    let localStorageContent = JSON.parse(localStorage.getItem("Cart"))
+    localStorageContent != null
+    localStorageContent.push(product)
+    localStorage.setItem("Cart", JSON.stringify(localStorageContent))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//! =================
+//! PARTIE FORMULAIRE
+//! =================
 
 //* ======================
 //* VALIDITÉ DU FORMULAIRE

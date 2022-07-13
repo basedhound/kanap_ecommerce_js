@@ -90,7 +90,7 @@ function addProductToCart(product) {
                     localStorageContent[i].color == color
                 ) {
                     return (
-                        localStorageContent[i].quantity++,                        
+                        localStorageContent[i].quantity=localStorageContent[i].quantity+purchase.quantity,                                               
                         localStorage.setItem("Cart", JSON.stringify(localStorageContent)),
                         (localStorageContent = JSON.parse(localStorage.getItem("Cart"))),
                         purchaseConfirmation()
