@@ -5,14 +5,9 @@ fetch("http://localhost:3000/api/products")
     .then((response) => response.json())
     .then((data) => displayProducts(data))
 
-// 1. Le script "fetch" des données
-// 2. Ces données sont converties en .json
-// 3. Ces données sont transmises à "getProducts"
-
 //! Créer les éléments HTML depuis le script JS
 
 function displayProducts(data) {
-
     data.forEach((product) => {        
         
         const _id = product._id
@@ -20,42 +15,44 @@ function displayProducts(data) {
         const altTxt = product.altTxt
         const name = product.name
         const description = product.description
-        // const {_id, imageUrl, altTxt, name, description} = couch
+        // (ou) const {_id, imageUrl, altTxt, name, description} = product
         
-        const anchor = makeAnchor(_id)
+        const anchorLink = makeAnchorLink(_id)
         const article = document.createElement("article")
         const image = makeImage(imageUrl, altTxt)
         const title = makeTitle(name)
         const p = makeParagraph(description)
         
         addElementsToArticle(article, [image, title, p])
-        addArticleToAnchor(anchor, article)
+        addArticleToAnchor(anchorLink, article)
     })
 }
 
-
 function addElementsToArticle(article, array) {
-    array.forEach((item) => {
-        article.appendChild(item)
+    array.forEach((product) => {
+        article.appendChild(product)
     })
+    // (ou)
     // article.appendChild(image)
     // article.appendChild(title)
     // article.appendChild(p)
 }
 
-function makeAnchor(id) {
-    const anchor = document.createElement("a")
-    anchor.href = "./product.html?id=" + id
-    return anchor
+function makeAnchorLink(id) {
+    const anchorLink = document.createElement("a")
+    anchorLink.href = "./product.html?id=" + id
+    return anchorLink
 }
 
-function addArticleToAnchor(anchor, article) {
-    const items = document.querySelector("#items")
-    if (items != null) {
-        items.appendChild(anchor)
-        anchor.appendChild(article)
+function addArticleToAnchor(anchorLink, article) {
+    const products = document.querySelector("#items")
+    if (products != null) {
+        products.appendChild(anchorLink)
+        anchorLink.appendChild(article)
     }
 }
+
+
 
 function makeImage(imageUrl, altTxt) {
     const image = document.createElement("img")

@@ -1,27 +1,16 @@
-// Main function, auto executed at load time
-; (async () => {
-    const productId = getProductId()
-    const productData = await getProductData(productId)
-    hydratePage(productData)
-    addProductToCart(productData)
-})()
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+console.log("ID du produit affiché :", id); 
+const cart = JSON.parse(localStorage.getItem("Cart"))
+console.log("Panier :", cart)
 
-function getProductId() {
-    return new URL(window.location.href).searchParams.get('id')
-}
+fetch(`http://localhost:3000/api/products/${id}`)
+  .then((response) => response.json())
+  .then((res) => hydrateProduct(res))
 
-async function getProductData(productId) {
-    return fetch(`http://localhost:3000/api/products/${productId}`)
-        .catch((error) => {
-            console.log(error)
-        })
-        .then((response) => response.json())
-        .then((productData) => productData)
-}
-
-
-function hydratePage(product) {
-    // Hydrate page with data
+function hydrateProduct(product) {
+    // Titre de la page : En fonction du produit affiché
+    document.title = product.name
 
     // Display ELEMENTS : title / price / description
     document.getElementById('title').textContent = product.name
@@ -46,6 +35,7 @@ function hydratePage(product) {
         option.textContent = color
         select.appendChild(option)
     })
+    addProductToCart(product)
 }
 
 function addProductToCart(product) {
@@ -60,7 +50,7 @@ function addProductToCart(product) {
             price: product.price,
             image: product.imageUrl,
             altText: product.altTxt,
-            name: product.name
+            name: product.name            
         }
 
         if (OrderIsInvalid(color, quantity)) return
@@ -80,6 +70,7 @@ function addProductToCart(product) {
 
         if (localStorageContent == null) {
             localStorageContent = []
+            console.log("Produit ajouté au Panier : ", purchase)
             localStorageContent.push(purchase)
             localStorage.setItem("Cart", JSON.stringify(localStorageContent))
             purchaseConfirmation()
@@ -89,7 +80,7 @@ function addProductToCart(product) {
                     localStorageContent[i].id == product._id &&
                     localStorageContent[i].color == color
                 ) {
-                    return (
+                    return (console.log("Produit ajouté au Panier : ", purchase),                        
                         localStorageContent[i].quantity=localStorageContent[i].quantity+purchase.quantity,                                               
                         localStorage.setItem("Cart", JSON.stringify(localStorageContent)),
                         (localStorageContent = JSON.parse(localStorage.getItem("Cart"))),
@@ -102,7 +93,7 @@ function addProductToCart(product) {
                     localStorageContent[i].color != color || 
                     localStorageContent[i].id != product._id
                     ) {
-                    return (console.log("new"),
+                    return (console.log("Produit ajouté au Panier : ", purchase),
                     localStorageContent.push(purchase),
                     localStorage.setItem("Cart", JSON.stringify(localStorageContent)),
                     (localStorageContent = JSON.parse(localStorage.getItem("Cart"))),
@@ -116,18 +107,11 @@ function addProductToCart(product) {
     return (localStorageContent = JSON.parse(localStorage.getItem("Cart")))
 }
 
-
-
-
-
 function OrderIsInvalid(color, quantity) {
     // if (color == null || color === "" || quantity == null || quantity == 0) 
     if (!color || !quantity || quantity == 0) {
         alert("Merci de choisir une couleur et une quantité")
+        console.log("Achat invalide : Manque quantité / couleur")
         return true
     }
 }
-
-
-
-
