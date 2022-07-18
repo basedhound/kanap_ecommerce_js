@@ -6,7 +6,7 @@
 // description: "Excepteur sint occaecat cupidatat non proident"
 
 //*------------------------------------------------------------------------
-//* Récupération des produits de l'api
+//* Récupération des produits de l'API
 //*------------------------------------------------------------------------ 
 fetch("http://localhost:3000/api/products")
     // Récupérer les données de l'API, convertir le résultat en .json

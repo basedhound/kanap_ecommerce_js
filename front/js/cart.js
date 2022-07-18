@@ -1,9 +1,3 @@
-//* CONSTANTES
-// const cartStrings = localStorage.getItem("Cart")
-// const cart = JSON.parse(cartStrings)
-const cart = JSON.parse(localStorage.getItem("Cart"))
-console.log("Panier :", cart)
-
 // GET LOCALSTORAGECONTENT + DISPLAY PRODUCTS
 // cart.forEach((product) => displayCart(product));
 
@@ -23,15 +17,27 @@ console.log("Panier :", cart)
 //     return productApi  
 // }
 
+//*--------------------------------------------------------------------------
+//* Variables principales
+//*--------------------------------------------------------------------------
+const myCart = JSON.parse(localStorage.getItem("Cart"))
+console.log("Panier :", myCart)
+
+
+//*--------------------------------------------------------------------------
+//* Contrôler l'état du localstorage
+//*--------------------------------------------------------------------------
 function checkLocalStorage() {}
-if (localStorage.length > 0){
-    cart.forEach((product) => displayCart(product));
-}else{
-    alert("Votre Panier est vide. Veuillez ajouter des produits pour continuer.")  
-    window.location.href = "index.html"
+if (myCart === null || myCart.length == 0 ){
+    document.querySelector("#cartAndFormContainer").innerHTML = "<h1>Votre panier est vide</h1>";
+    // alert("Votre Panier est vide. Veuillez ajouter des produits pour continuer.")  
+    // window.location.href = "index.html"
+} else { 
+    myCart.forEach((product) => displayCart(product));
 }
 
-function displayCart(product) {
+function displayCart(product, res) {
+
     const productArticle = makeProductArticle(product)
     const productImage = makeProductImage(product)
     productArticle.appendChild(productImage)
@@ -131,7 +137,7 @@ function addQuantitySetting(settings, product) {
 
 
 function updateQuantityAndTotal(product, id, color, newValue) {
-    const itemToUpdate = cart.find((product) => product.id === id && product.color === color)
+    const itemToUpdate = myCart.find((product) => product.id === id && product.color === color)
     itemToUpdate.quantity = Number(newValue)
     displayTotalQuantity()
     displayTotalPrice()
@@ -142,7 +148,7 @@ function displayTotalPrice() {
     const totalPriceDiv = document.querySelector("#totalPrice")
     // Méthode 1
     let totalPrice = 0
-    cart.forEach((product) => {
+    myCart.forEach((product) => {
         const totalCartPrice = product.price * product.quantity
         totalPrice += totalCartPrice
     })
@@ -155,7 +161,7 @@ function displayTotalQuantity() {
     const totalQuantityDiv = document.querySelector("#totalQuantity")
     // Méthode 1
     let totalQuantity = 0
-    cart.forEach((product) => {
+    myCart.forEach((product) => {
         const totalCartQuantity = product.quantity
         totalQuantity += totalCartQuantity
     })
@@ -165,8 +171,8 @@ function displayTotalQuantity() {
 }
 
 function saveNewDataToCache() {
-    const cartUpdate = JSON.stringify(cart)
-    console.log("Mise à jour du Panier :", cart)
+    const cartUpdate = JSON.stringify(myCart)
+    console.log("Mise à jour du Panier :", myCart)
     localStorage.setItem("Cart", cartUpdate)
 }
 
@@ -182,8 +188,8 @@ function addDeleteToSettings(settings, product) {
 }
 
 function deleteProduct(product) {
-    const purchaseToDelete = cart.findIndex((purchase) => product.id === purchase.id && product.color === purchase.color)
-    cart.splice(purchaseToDelete, 1)
+    const purchaseToDelete = myCart.findIndex((purchase) => product.id === purchase.id && product.color === purchase.color)
+    myCart.splice(purchaseToDelete, 1)
 
     deleteProductFromPage(product)
     saveNewDataToCache(product)
@@ -191,7 +197,7 @@ function deleteProduct(product) {
     displayTotalPrice()
 
     // Supprime la key "Cart" une fois tous les produits supprimés
-    if (cart == 0) {
+    if (myCart == 0) {
         const cache = window.localStorage
         cache.clear()
     }
