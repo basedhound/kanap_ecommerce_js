@@ -28,7 +28,7 @@ fetch(`http://localhost:3000/api/products`)
 //*--------------------------------------------------------------------------
 // La variable "cart" donne accès au contenu du localStorage, dans la clée "cart"
 let myCart = JSON.parse(localStorage.getItem("Cart"));
-console.log("Panier :", myCart);
+console.log("Panier initial :", myCart);
 // La variable "purchase" est un objet qui va accueillir les informations du produit
 let purchase = {};
 // id du procuit
@@ -90,9 +90,9 @@ function purchaseProduct(product) {
             id: product._id,
             color: color,
             quantity: Number(quantity),
-            price: product.price,
-            image: product.imageUrl,
-            altText: product.altTxt,
+            // price: product.price,
+            // image: product.imageUrl,
+            // altText: product.altTxt,
             name: product.name
         }
 
@@ -171,6 +171,8 @@ function purchaseIsInvalid(color, quantity) {
 //* Confirmer l'achat à l'aide d'indications visuelles :
 //*------------------------------------------------------------------------
 function purchaseConfirmation(purchase) {
+    console.log("Produit ajouté au Panier : ", purchase)
+    console.log("Panier à jour : ", myCart)
     // alert(`${purchase.name} option: ${purchase.color} a bien été ajouté au panier !`)
     // Ouvre une fenêtre dans le navigateur permettant de se diriger vers le panier
     if (window.confirm(`${purchase.name} option: ${purchase.color} a bien été ajouté au panier !
@@ -182,8 +184,7 @@ function purchaseConfirmation(purchase) {
     // Change le style visuel du bouton d'achat
     document.querySelector("#addToCart").style.color = "rgb(0, 205, 0)";
     document.querySelector("#addToCart").textContent = "Produit ajouté !";
-    console.log("Produit ajouté au Panier : ", purchase)
-    console.log("Panier à jour : ", myCart)
+
 }
 
 //*------------------------------------------------------------------------
