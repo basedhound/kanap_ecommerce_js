@@ -28,7 +28,7 @@ fetch(`http://localhost:3000/api/products`)
 //*--------------------------------------------------------------------------
 // La variable "cart" donne accès au contenu du localStorage, dans la clée "cart"
 let myCart = JSON.parse(localStorage.getItem("Cart"));
-console.log("Panier initial :", myCart);
+console.log("Panier :", myCart);
 // La variable "purchase" est un objet qui va accueillir les informations du produit
 let purchase = {};
 // id du procuit
@@ -110,7 +110,7 @@ function purchaseProduct(product) {
 //*------------------------------------------------------------------------
 function addToCart(product, purchase, color) {
     // Variable "myCart"
-    let myCart = JSON.parse(localStorage.getItem("Cart"))
+    // let myCart = JSON.parse(localStorage.getItem("Cart"))
 
     // Si "myCart" est vide -> création d'un tableau -> ajout du 1er produit
     if (myCart == null) {
@@ -129,8 +129,8 @@ function addToCart(product, purchase, color) {
                 myCart[i].color == color
             ) {
                 return (
-                    myCart[i].quantity = myCart[i].quantity + purchase.quantity,
-                    localStorage.setItem("Cart", JSON.stringify(myCart)),                    
+                    myCart[i].quantity = Math.min(myCart[i].quantity + purchase.quantity, 100),
+                    localStorage.setItem("Cart", JSON.stringify(myCart)),
                     purchaseConfirmation(purchase)
                 );
             }
@@ -144,13 +144,24 @@ function addToCart(product, purchase, color) {
             ) {
                 return (
                     myCart.push(purchase),
-                    localStorage.setItem("Cart", JSON.stringify(myCart)),                    
+                    localStorage.setItem("Cart", JSON.stringify(myCart)),
                     purchaseConfirmation(purchase)
                 )
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 //*------------------------------------------------------------------------
 //* Contrôler la validité de l'achat : Quantité & Couleur :
