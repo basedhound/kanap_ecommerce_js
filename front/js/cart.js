@@ -18,21 +18,19 @@ fetch("http://localhost:3000/api/products")
     .then((products) => {
         console.log("Produits API :", products);
         // appel de la fonction affichagePanier
-        hydrateProducts(products);
+        getProducts(products);
     })
     .catch((error) => {
         document.querySelector("#cartAndFormContainer").innerHTML = "<h1>erreur 404</h1>";
         console.log("API - erreur 404 : " + error);
     });
 
-
 //*---------------------------------------------------------------------
 //* Fonction détermine les conditions d'affichage des produits du panier
 //*---------------------------------------------------------------------
-function hydrateProducts(product) {
+function getProducts(product) {
     // on récupère le panier converti
-    let myCart = JSON.parse(localStorage.getItem("Cart"));
-    console.log("Panier :", myCart)
+    const myCart = JSON.parse(localStorage.getItem("Cart"));
     // si il y a un panier avec une taille differante de 0 (donc supérieure à 0)
     if (myCart && myCart.length != 0) {
         // zone de correspondance clef/valeur de l'api et du panier grâce à l'id produit choisit dans le localStorage
@@ -48,14 +46,15 @@ function hydrateProducts(product) {
                 }
             }
         }
+        console.log("Panier :", myCart)
         // on joue affiche,  panier a des clefs/valeurs ajoutés que l'on a pas remonté dans le local storage et sont pourtant réèlles
         // ici panier à les valeurs du local storage + les valeurs définies au dessus
         //on demande à affiche() de jouer avec les données panier 
         //les valeurs ajoutés à panier ont un scope agrandi puisque appelé via la fonction affiche() d'ailleur dans affiche() il n'y a pas d'appel à panier de local storage.
-        displayCart(myCart);
+        hydrateCart(myCart);
     }
     else {
-        // En cas de panier vide : 
+        // Si le panier est vide : 
         document.querySelector("#totalQuantity").innerHTML = "0";
         document.querySelector("#totalPrice").innerHTML = "0";
         document.querySelector("h1").innerHTML =
@@ -63,13 +62,13 @@ function hydrateProducts(product) {
     }
     // reste à l'écoute grâce aux fonctions suivantes pour modifier l'affichage
     updateQuantity();
-    deleteItem();
+    deletePurchase();
 }
 
 //*--------------------------------------------------------------
 //* Fonction d'affichage d'un panier (tableau)
 //* --------------------------------------------------------------
-function displayCart(myCart) {
+function hydrateCart(myCart) {
     // on déclare et on pointe la zone d'affichage
     let cartArea = document.querySelector("#cart__items");
     // on créait les affichages des produits du panier via un map et introduction de dataset dans le code
@@ -97,7 +96,8 @@ function displayCart(myCart) {
     </article>`
     ).join(""); //on remplace les virgules de jonctions des objets du tableau par un vide
     // reste à l'écoute des modifications de quantité pour l'affichage et actualiser les données      
-    totalProduit();
+    totalCart();
+
 }
 
 //* --------------------------------------------------------------
@@ -111,7 +111,7 @@ function updateQuantity() {
     cartArea.forEach((purchase) => {
         purchase.addEventListener("change", (eq) => {
             // vérification d'information de la valeur du clic et son positionnement dans les articles
-            let myCart = JSON.parse(localStorage.getItem("Cart"));
+            const myCart = JSON.parse(localStorage.getItem("Cart"));
             // boucle pour modifier la quantité du produit du panier grace à la nouvelle valeur
             for (product of myCart)
                 if (
@@ -123,31 +123,31 @@ function updateQuantity() {
                     // on met à jour le dataset quantité
                     purchase.dataset.quantity = eq.target.value;
                     // on joue la fonction pour actualiser les données
-                    totalProduit();
+                    totalCart();
                 }
             console.log("Produit modifié :", product)
-            console.log("Panier à jour :", myCart)
+            console.log("Panier mis à jour :", myCart)
         });
 
     });
 }
 
-//--------------------------------------------------------------
-// fonction ajout nombre total produit et coût total
-//--------------------------------------------------------------
-function totalProduit() {
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
+function totalCart() {
     // déclaration variable en tant que nombre
     let totalArticle = 0;
     // déclaration variable en tant que nombre
     let totalPrice = 0;
     // on pointe l'élément
-    const cart = document.querySelectorAll(".cart__item");
+    const purchases = document.querySelectorAll(".cart__item");
     // pour chaque élément cart
-    cart.forEach((cart) => {
+    purchases.forEach((purchase) => {
         //je récupère les quantités des produits grâce au dataset
-        totalArticle += JSON.parse(cart.dataset.quantity);
+        totalArticle += JSON.parse(purchase.dataset.quantity);
         // je créais un opérateur pour le total produit grâce au dataset
-        totalPrice += cart.dataset.quantity * cart.dataset.price;
+        totalPrice += purchase.dataset.quantity * purchase.dataset.price;
     });
     // je pointe l'endroit d'affichage nombre d'article
     document.getElementById("totalQuantity").textContent = totalArticle;
@@ -156,19 +156,22 @@ function totalProduit() {
     //   totalPriceDiv.textContent = totalPrice
 }
 
-function deleteItem() {
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
+function deletePurchase() {
     // déclaration de variables
-    const cartdelete = document.querySelectorAll(".cart__item .deleteItem");
+    const deletePurchase = document.querySelectorAll(".cart__item .deleteItem");
     // pour chaque élément cartdelete
-    cartdelete.forEach((cartdelete) => {
+    deletePurchase.forEach((purchase) => {
         // On écoute s'il y a un clic dans l'article concerné
-        cartdelete.addEventListener("click", () => {
+        purchase.addEventListener("click", () => {
             // appel de la ressource du local storage
-            // let myCart = JSON.parse(localStorage.getItem("Cart"));
+            const myCart = JSON.parse(localStorage.getItem("Cart"));
             for (let d = 0, c = myCart.length; d < c; d++)
                 if (
-                    myCart[d].id === cartdelete.dataset.id &&
-                    myCart[d].color === cartdelete.dataset.color
+                    myCart[d].id === purchase.dataset.id &&
+                    myCart[d].color === purchase.dataset.color
                 ) {
                     // déclaration de variable utile pour la suppression
                     const num = [d];
@@ -179,13 +182,13 @@ function deleteItem() {
 
                     // suppression visuelle de l'élément sur la page, évite de devoir reload la page
                     const productToDelete = document.querySelector(
-                        `article[data-id="${cartdelete.dataset.id}"][data-color="${cartdelete.dataset.color}"]`
+                        `article[data-id="${purchase.dataset.id}"][data-color="${purchase.dataset.color}"]`
                     )
                     productToDelete.remove()
 
                     // on renvoit le nouveau panier converti dans le local storage et on joue la fonction
                     localStorage.Cart = JSON.stringify(newCart);
-                    console.log("Panier à jour :", newCart)
+                    console.log("Panier mis à jour :", newCart)
 
                     //affichage informatif
                     if (newCart && newCart.length == 0) {
@@ -197,7 +200,7 @@ function deleteItem() {
                             "Vous n'avez pas d'article dans votre panier";
                     }
 
-                    totalProduit(); // logique mais pas obligatoire à cause du reload plus bas qui raffraichit l'affichage; serait necessaire avec suppression sans reload
+                    totalCart(); // logique mais pas obligatoire à cause du reload plus bas qui raffraichit l'affichage; serait necessaire avec suppression sans reload
                     // on recharge la page qui s'affiche sans le produit grace au nouveau panier
                     // return location.reload();
                 }
@@ -205,23 +208,29 @@ function deleteItem() {
     });
 }
 
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
 function listenForm() {
-    let firstNameField = document.getElementById('firstName')
-    firstNameField.addEventListener('input', validateFirstName)
+    let firstNameField = document.querySelector('#firstName')
+    firstNameField.addEventListener('input', checkFirstName)
 
-    let lastNameField = document.getElementById('lastName')
-    lastNameField.addEventListener('input', validateLastName)
+    let lastNameField = document.querySelector('#lastName')
+    lastNameField.addEventListener('input', checkLastName)
 
-    let cityField = document.getElementById('city')
-    cityField.addEventListener('input', validateCity)
+    let cityField = document.querySelector('#city')
+    cityField.addEventListener('input', checkCity)
 
-    let addressField = document.getElementById('address')
-    addressField.addEventListener('input', validateAddress)
+    let addressField = document.querySelector('#address')
+    addressField.addEventListener('input', checkAddress)
 
-    let emailField = document.getElementById('email')
-    emailField.addEventListener('input', validateEmail)
+    let emailField = document.querySelector('#email')
+    emailField.addEventListener('input', checkEmail)
 }
 
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
 function submitForm(e) {
     // e.preventDefault()
     const valueFirstName = document.getElementById("firstName").value
@@ -230,15 +239,22 @@ function submitForm(e) {
     const valueCity = document.getElementById("city").value
     const valueEmail = document.getElementById("email").value
 
-    const valideForm = validateEmail() && validateAddress() && validateCity() && validateFirstName() && validateLastName()
+    const myCart = JSON.parse(localStorage.getItem("Cart"));
+    const valideForm = checkEmail() && checkAddress() && checkCity() && checkFirstName() && checkLastName()
 
-    if (valueFirstName !== '' && valueLastName !== '' && valueAddress !== '' && valueCity !== '' && valueEmail !== '' && valideForm) {
-        
-    // Récupérer les id(s) des produits dans mon panier
-    const productsIds = []
-    myCart.forEach((product) => {
-        productsIds.push(product.id)
-    })
+    if (myCart != null &&
+        valueFirstName !== '' &&
+        valueLastName !== '' &&
+        valueAddress !== '' &&
+        valueCity !== '' &&
+        valueEmail !== '' &&
+        valideForm) {
+
+        // Récupérer les id(s) des produits dans mon panier
+        const productsIds = []
+        myCart.forEach((purchase) => {
+            productsIds.push(purchase.id)
+        })
 
         fetch("http://localhost:3000/api/products/order", {
             method: "POST",
@@ -262,11 +278,11 @@ function submitForm(e) {
             })
 
         })
-            .then(response => response.json())
-            .then(order => {
-                console.log("Formulaire de commande : ", order)
+            .then(res => res.json())
+            .then(res => {
+                console.log("Formulaire de commande : ", res)
                 alert("Votre commande a été effectuée !")
-                // window.location.href = (`./confirmation.html?orderId=${res.orderId}`)
+                window.location.href = (`./confirmation.html?orderId=${res.orderId}`)
                 // window.location.replace(`./confirmation.html?orderId=${res.orderId}`)
 
             })
@@ -276,34 +292,33 @@ function submitForm(e) {
             })
     } else {
         e.preventDefault()
-        console.log("Champs invalides")
-        alert("Le formulaire n'est pas correctement rempli, veuillez réessayer.")
+        console.error("Champs invalides")
+        alert("Formulaire invalide et/ou Panier vide.\nNote : TOUS les champs sont requis !")
     }
 }
 
-
-
-
-
-
-function validateFirstName() {
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
+function checkFirstName() {
 
     let firstNameInput = document.getElementById("firstName")
     let firstNameValidate = document.getElementById("firstName").value
     let firstNameErrorMsg = document.getElementById("firstNameErrorMsg")
     let order = document.getElementById("order")
 
-    const firstNameRGEX = /^[a-zA-Z ]+$/
+    const firstNameRGEX = /^(?![\s.]+$)[A-zÀ-ú\s\-']{1,25}$/
     let firstNameResult = firstNameRGEX.test(firstNameValidate)
 
     if (firstNameResult == false) {
         firstNameInput.style.backgroundColor = "red"
         firstNameInput.style.color = "white"
-        firstNameErrorMsg.innerHTML = "Votre prénom ne doit comporter que des lettres"
+        firstNameErrorMsg.innerHTML = `"Prénom" ne doit comporter que des lettres.<br>(Tirets et apostrophes autorisés)<br>Champ requis`
         firstNameErrorMsg.style.display = "inherit"
         order.disabled = true
         return false
-    } else {
+    }
+    else {
         firstNameErrorMsg.style.display = "none"
         firstNameInput.style.backgroundColor = "rgb(0, 205, 0)"
         firstNameInput.style.color = "black"
@@ -312,19 +327,21 @@ function validateFirstName() {
     }
 }
 
-
-function validateLastName() {
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
+function checkLastName() {
     let lastNameInput = document.getElementById("lastName")
     let lastNameValidate = document.getElementById("lastName").value
     let lastNameErrorMsg = document.getElementById("lastNameErrorMsg")
 
-    const lastNameRGEX = /^[a-zA-Z ]+$/
+    const lastNameRGEX = /^(?![\s.]+$)[A-zÀ-ú\s\-']{1,25}$/
     let lastNameResult = lastNameRGEX.test(lastNameValidate)
 
     if (lastNameResult == false) {
         lastNameInput.style.backgroundColor = "red"
         lastNameInput.style.color = "white"
-        lastNameErrorMsg.innerHTML = "Votre nom ne doit comporter que des lettres"
+        lastNameErrorMsg.innerHTML = `"Nom" ne doit comporter que des lettres.<br>(Tirets et apostrophes autorisés)<br>Champ requis"`
         lastNameErrorMsg.style.display = "inherit"
         return false
     } else {
@@ -335,19 +352,21 @@ function validateLastName() {
     }
 }
 
-
-function validateAddress() {
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
+function checkAddress() {
     let addressInput = document.getElementById("address")
     let addressValidate = document.getElementById("address").value
     let addressErrorMsg = document.getElementById("addressErrorMsg")
 
-    const addressRGEX = /^[a-zA-Z0-9\s\,\''\-]*$/
+    const addressRGEX = /^[0-9]{1,3}(?![\s.]+$)[a-zA-Z\s\-'.]+$/
     let addressResult = addressRGEX.test(addressValidate)
 
     if (addressResult == false) {
         addressInput.style.backgroundColor = "red"
         addressInput.style.color = "white"
-        addressErrorMsg.innerHTML = "Votre adresse ne doit pas comporter de caractères spéciaux"
+        addressErrorMsg.innerHTML = "Exemple : 7 rue des Fleurs<br>Champ requis"
         addressErrorMsg.style.display = "inherit"
         return false
     } else {
@@ -356,21 +375,23 @@ function validateAddress() {
         addressInput.style.color = "black"
         return true
     }
-
 }
 
-function validateCity() {
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
+function checkCity() {
     let cityInput = document.getElementById("city")
     let cityValidate = document.getElementById("city").value
     let cityErrorMsg = document.getElementById("cityErrorMsg")
 
-    const cityRGEX = /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/
+    const cityRGEX = /^(?![\s.]+$)[A-zÀ-ú\s\-']{1,25}$/
     let cityResult = cityRGEX.test(cityValidate)
 
-    if (cityResult == false) {
+    if (cityResult == false || cityInput.value.length === 0) {
         cityInput.style.backgroundColor = "red"
         cityInput.style.color = "white"
-        cityErrorMsg.innerHTML = "Votre ville ne doit pas comporter que des lettres et certains caractères spéciaux"
+        cityErrorMsg.innerHTML = "Votre ville ne doit comporter que des lettres.<br>(Tirets et apostrophes autorisés)<br>Champ requis"
         cityErrorMsg.style.display = "inherit"
         return false
     } else {
@@ -381,9 +402,10 @@ function validateCity() {
     }
 }
 
-
-function validateEmail() {
-
+//*--------------------------------------------------------------
+//* Fonction ajout nombre total produit et coût total
+//*--------------------------------------------------------------
+function checkEmail() {
     let emailInput = document.getElementById("email")
     let emailValidate = document.getElementById("email").value
     let emailErrorMsg = document.getElementById("emailErrorMsg")
@@ -394,8 +416,8 @@ function validateEmail() {
     if (emailResult == false) {
         emailInput.style.backgroundColor = "red"
         emailInput.style.color = "white"
-        emailErrorMsg.innerHTML = "Exemple : kanap@gmail.com"
-        //   emailErrorMsg.style.display="inherit"
+        emailErrorMsg.innerHTML = "Exemple : moi@exemple.com<br>Champ requis"
+        emailErrorMsg.style.display = "inherit"
         return false
     } else {
         emailInput.style.backgroundColor = "rgb(0, 205, 0)"
@@ -403,213 +425,6 @@ function validateEmail() {
         emailErrorMsg.style.display = "none"
         return true
     }
-}
-
-
-
-
-
-
-
-
-
-
-
-function testcancel() {
-    // Faire une fonction 1 : Build Contact Form
-    const firstName = document.querySelector("#firstName");
-    const lastName = document.querySelector("#lastName");
-    const address = document.querySelector("#address");
-    const city = document.querySelector("#city");
-    const email = document.querySelector("#email");
-
-    let valueFirstName, valueLastName, valueAddress, valueCity, valueEmail;
-    // Appeler les fonctions suivantes
-
-
-    // Faire une fonction : Firstname validator
-    //! FIRSTNAME
-    firstName.addEventListener("input", function (e) {
-        valueFirstName;
-        if (e.target.value.length == 0) {
-            firstNameErrorMsg.innerHTML = "Ce champ est obligatoire"
-            valueFirstName = null;
-        }
-        else if (e.target.value.length < 3 || e.target.value.length > 25) {
-            firstNameErrorMsg.innerHTML = "Prénom doit contenir entre 3 et 25 caractères"
-            // firstName.style.backgroundColor="red"
-            // firstName.style.color="white"
-            valueFirstName = null
-        }
-        if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
-            firstNameErrorMsg.innerHTML = ""
-            valueFirstName = e.target.value
-        }
-        if (
-            // ! = different
-            !e.target.value.match(/^[a-z A-Z]{3,25}$/)
-            && e.target.value.length > 3
-            && e.target.value.length < 25
-        ) {
-            firstNameErrorMsg.innerHTML = "Votre prénom ne doit comporter que des lettres"
-            valueFirstName = null
-        }
-    });
-
-    // Faire une fonction : lastname validator
-    //! LASTNAME
-    lastName.addEventListener("input", function (e) {
-        valueLastName;
-        if (e.target.value.length == 0) {
-            lastNameErrorMsg.innerHTML = "Ce champ est obligatoire"
-            valueLastName = null
-        }
-        else if (e.target.value.length < 3 || e.target.value.length > 25) {
-            lastNameErrorMsg.innerHTML = "Nom doit contenir entre 3 et 25 caractères"
-            valueLastName = null
-        }
-        if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
-            lastNameErrorMsg.innerHTML = ""
-            valueLastName = e.target.value
-        }
-        if (
-            // ! = different
-            !e.target.value.match(/^[a-z A-Z]{3,25}$/)
-            && e.target.value.length > 3
-            && e.target.value.length < 25
-        ) {
-            lastNameErrorMsg.innerHTML = "Nom ne doit pas contenir de caractères spéciaux et/ou d'accents"
-            valueLastName = null
-        }
-    });
-
-    // Faire une fonction : address validator
-    //! ADDRESS
-    address.addEventListener("input", function (e) {
-        valueAddress;
-        if (e.target.value.length == 0) {
-            addressErrorMsg.innerHTML = "Ce champ est obligatoire"
-            valueAddress = null;
-        }
-        else if (e.target.value.length < 3 || e.target.value.length > 35) {
-            addressErrorMsg.innerHTML = "Adresse doit contenir entre 3 et 35 caractères"
-            valueAddress = null
-        }
-        if (e.target.value.match(/^[0-9]{1,3} [a-z A-Z]{3,35}$/)) {
-            addressErrorMsg.innerHTML = ""
-            valueAddress = e.target.value
-        }
-        if (
-            // ! = different
-            !e.target.value.match(/^[0-9]{1,3} [a-z A-Z]{3,35}$/)
-            && e.target.value.length > 3
-            && e.target.value.length < 35
-        ) {
-            addressErrorMsg.innerHTML = "Adresse commence par des chiffres, ne contient ni caractères spéciaux, ni accents"
-            valueAddress = null
-        }
-    });
-
-    // Faire une fonction : city validator
-    //! CITY
-    city.addEventListener("input", function (e) {
-        valueCity;
-        if (e.target.value.length == 0) {
-            cityErrorMsg.innerHTML = "Ce champ est obligatoire"
-            valueCity = null;
-        }
-        else if (e.target.value.length < 3 || e.target.value.length > 25) {
-            cityErrorMsg.innerHTML = "Ville doit contenir entre 3 et 25 caractères"
-            valueCity = null
-        }
-        if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
-            cityErrorMsg.innerHTML = ""
-            valueCity = e.target.value
-        }
-        if (
-            // ! = different
-            !e.target.value.match(/^[a-z A-Z]{3,25}$/)
-            && e.target.value.length > 3
-            && e.target.value.length < 25
-        ) {
-            cityErrorMsg.innerHTML = "Ville ne contient ni chiffres, ni caractères spéciaux, ni accents"
-            valueCity = null
-        }
-    });
-
-    // Faire une fonction : email validator
-    //! EMAIL
-    email.addEventListener("input", (e) => {
-        if (e.target.value.length == 0) {
-            emailErrorMsg.innerHTML = "Ce champ est obligatoire"
-            valueEmail = null
-        }
-        else if (e.target.value.match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/)) {
-            emailErrorMsg.innerHTML = ""
-            valueEmail = e.target.value
-        }
-        if (!e.target.value.match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/)
-            && !e.target.value.length == 0) {
-            emailErrorMsg.innerHTML = "Adresse email invalide (Ex : moi@exemple.com)"
-            valueEmail = null
-        }
-    });
-
-    // Faire une fonction : Final Form validator
-    const orderForm = document.querySelector(".cart__order__form")
-    orderForm.addEventListener("submit", (e) => {
-        e.preventDefault()
-        // console.log("stop")
-
-        if (valueFirstName && valueLastName && valueAddress && valueCity && valueEmail) {
-            const orderComplete = JSON.parse(localStorage.getItem("Cart"))
-            let productsIds = []
-
-            orderComplete.forEach((product) => {
-                productsIds.push(product.id)
-            })
-
-            // console.log(orderId)
-
-            const orderData = {
-                contact: {
-                    firstName: valueFirstName,
-                    lastName: valueLastName,
-                    address: valueAddress,
-                    city: valueCity,
-                    email: valueEmail
-                },
-                products: productsIds
-            }
-            // console.log(orderData)
-
-            //* Faire une fonction : sendFormtoApi
-            //! ===============================================================
-            //! Envoyer l'objet "orderData" à l'API pour obtenir ID de commande
-            //! ===============================================================
-            fetch("http://localhost:3000/api/products/order", {
-                method: "POST",
-                body: JSON.stringify(orderData),
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            })
-                .then(async (res) => res.json())
-                .then(async (data) => {
-                    console.log(data)
-                    const orderId = data.orderId
-                    window.location.href = "./confirmation.html" + "?orderId=" + orderId
-                })
-                .catch((err) => console.log(err))
-            //! ===============================================================
-
-        } else {
-            e.preventDefault()
-            console.log("Champs invalides")
-            alert("Le formulaire n'est pas correctement rempli, veuillez réessayer.")
-        }
-    })
-
 }
 
 

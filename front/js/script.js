@@ -9,16 +9,16 @@
 //* Récupération des produits de l'API
 //*------------------------------------------------------------------------ 
 fetch("http://localhost:3000/api/products")
-    // Récupérer les données de l'API, convertir le résultat en .json
+    // Récupérer les données de l'API => convertir le résultat en .json
     .then((res) => res.json())
-    // Les informations reçues, traitées en .json, sont nommées "products"
+    // Nommer les données obtenues "products"
     .then((products) => {
-        // Console : Afficher les informations récupérées dans un tableau
+        // Affichage les informations récupérées dans un tableau via la console
         console.table(products);
-        // Appeler la fonction "hydrateProducts", lui transmettre les informations (products)
-        hydrateProducts(products);
+        // Appel de la fonction "hydrateProducts" + transmission les données de l'API (products)
+        getProducts(products);
     })
-    // Si ERREUR : Remplacer titre par un h1 "erreur 404" et renvoit en console l'erreur.
+    // Si ERREUR : Afficher "erreur 404" via le HTML et la console
     .catch((err) => {
         document.querySelector(".titles").innerHTML = "<h1>erreur 404</h1>";
         console.error("API - erreur 404 : " + err);
@@ -27,13 +27,14 @@ fetch("http://localhost:3000/api/products")
 //*----------------------------------------------------------------------
 //* Affichage des Produits (Méthode 1 : innerHTML)
 //*----------------------------------------------------------------------
-function hydrateProducts(products) {
-    // Variable qui sélectionne la <section> "#items" contenant les futurs <article>
+function getProducts(products) {
+    // La constante sélectionne la <section> "#items" qui va accueillir les futurs <article>
     const sectionItems = document.querySelector("#items");
-    // Pour chaque indice (product) de "products" ... ->
-    for (const product of products) {    
-    // : Création de : a.>article>img+h3+p + valeurs dynamiques
-      sectionItems.innerHTML += `<a href="./product.html?id=${product._id}">
+    // Pour chaque indice "product" de "products" [...] ->
+    for (const product of products) {
+        // : Création de : a.>article>img+h3+p + valeurs dynamiques
+        sectionItems.innerHTML +=
+            `<a href="./product.html?id=${product._id}">
       <article>
         <img src="${product.imageUrl}" alt="${product.altTxt}">
         <h3 class="productName">${product.name}</h3>
@@ -104,13 +105,13 @@ function hydrateProducts(products) {
 //     // On ajoute à la balise <a> ("anchor") -> la balise <article>
 //     anchor.appendChild(article)
 
-//     // Array = [image, name, description]    
+//     // Array = [image, name, description]
 //     // On sélectionne chaque élément du tableau (array)
 //     array.forEach((element) => {
-//         // On ajoute à la balise <article> ("anchor") -> Les éléments du tableau [image, name, description] 
+//         // On ajoute à la balise <article> ("anchor") -> Les éléments du tableau [image, name, description]
 //         article.appendChild(element)
 //     })
-//     // = 
+//     // =
 //     // article.appendChild(image)
 //     // article.appendChild(h3)
 //     // article.appendChild(p)

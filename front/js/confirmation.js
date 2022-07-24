@@ -5,9 +5,10 @@ displayOrderId(orderId)
 // cleanCache() 
 
 function getOrderId() {
-const queryString = window.location.search
-const urlParams = new URLSearchParams(queryString)
+const urlParams = new URLSearchParams(location.search)
+console.log("Numéro de commande :", urlParams.get("orderId"))
 return urlParams.get("orderId")
+
 // return new URL(window.location.href).searchParams.get('orderId')
 }
 

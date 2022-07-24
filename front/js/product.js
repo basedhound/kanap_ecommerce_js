@@ -1,11 +1,18 @@
 //*--------------------------------------------------------------------------
 //* Récupérer l'ID du produit via l'URL 
 //*--------------------------------------------------------------------------
-// La variable "params" récupère l'URL de la page affichée
+// Constante "params" : récupère l'URL de la page affichée
 const params = new URLSearchParams(window.location.search);
-// La variable "id" récupère la valeur du paramètre "id" dans l'URL (id=...)
+// Constante "id" : récupère la valeur du paramètre "id" dans l'URL (id=...)
 const id = params.get("id");
-console.log("ID du produit affiché :", id);
+console.log("ID du produit à afficher :", id);
+
+//*--------------------------------------------------------------------------
+//* Déclaration du panier "Cart" (key) dans le localStorage
+//*--------------------------------------------------------------------------
+// La variable "cart" donne accès au contenu du localStorage, dans la clée "cart"
+let myCart = JSON.parse(localStorage.getItem("Cart")) 
+console.log(myCart)
 
 //*------------------------------------------------------------------------
 //* Récupération de l'objet produit à afficher via l'API
@@ -22,17 +29,6 @@ fetch(`http://localhost:3000/api/products`)
         document.querySelector(".item").innerHTML = "<h1>erreur 404</h1>";
         console.error("API - erreur 404 : " + error);
     });
-
-//*--------------------------------------------------------------------------
-//* Variables principales
-//*--------------------------------------------------------------------------
-// La variable "cart" donne accès au contenu du localStorage, dans la clée "cart"
-let myCart = JSON.parse(localStorage.getItem("Cart"));
-console.log("Panier :", myCart);
-// La variable "purchase" est un objet qui va accueillir les informations du produit
-let purchase = {};
-// id du procuit
-purchase._id = id;
 
 //*------------------------------------------------------------------------
 //* Affichage du Produit
@@ -70,15 +66,16 @@ function hydrateProduct(products) {
                 colorsParent.appendChild(colorSettings)
                 // colorsParent.innerHTML += `<option value="${color}">${color}</option>`;
             })
-            purchaseProduct(product)
+            console.log(`${product.name} est affiché`);
+            productToPurchase(product)
         }
     }
 }
 
 //*------------------------------------------------------------------------
-//* Acheter des Produits => Fonction principale : 
+//* Lancer procédure d'achat : Créer objet "Purchase" + Appel des fonctions
 //*------------------------------------------------------------------------
-function purchaseProduct(product) {
+function productToPurchase(product) {
     // On écoute ce qu'il se passe dans :
     const button = document.querySelector('#addToCart')
     button.addEventListener("click", () => {
@@ -95,18 +92,30 @@ function purchaseProduct(product) {
             // altText: product.altTxt,
             name: product.name
         }
+        console.log("Produit en attente :", purchase)
 
-        // On contrôle la validité de l'achat (coueur, quantité)
-        if (purchaseIsInvalid(color, quantity)) return
-        // On ajoute le produit au panier
+        // Contrôler la validité de l'achat (couleur, quantité)
+        if (purchaseInvalid(color, quantity)) return
+        // Ajouter un produit au panier
         addToCart(product, purchase, color)
-        // On réinitialise le style du bouton "Ajouter au panier"
+        // Réinitialiser le style du bouton "Ajouter au panier" après un achat
         resetButton()
     })
 }
 
 //*------------------------------------------------------------------------
-//* Ajouter au Panier :
+//* Contrôler la validité de l'achat : 
+//*------------------------------------------------------------------------
+function purchaseInvalid(color, quantity) {
+    if (!color || !quantity || quantity == 0 || quantity < 1 || quantity > 100) {
+        alert("Pour valider le choix de cet article, veuillez renseigner une couleur, et/ou une quantité entre 1 et 100")
+        console.error("Erreur : Quantité et/ou Couleur invalides")
+        return true
+    }
+}
+
+//*------------------------------------------------------------------------
+//* Ajouter l'article au Panier :
 //*------------------------------------------------------------------------
 function addToCart(product, purchase, color) {
     // Variable "myCart"
@@ -152,32 +161,6 @@ function addToCart(product, purchase, color) {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-//*------------------------------------------------------------------------
-//* Contrôler la validité de l'achat : Quantité & Couleur :
-//*------------------------------------------------------------------------
-function purchaseIsInvalid(color, quantity) {
-    // let choixProduit = document.querySelector("#addToCart");
-    // choixProduit.addEventListener("click", () => {
-    // if (color == null || color === "" || quantity == null || quantity == 0) 
-    // Invalide si : 
-    if (!color || !quantity || quantity == 0 || quantity < 1 || quantity > 100) {
-        alert("Pour valider le choix de cet article, veuillez renseigner une couleur, et/ou une quantité valide entre 1 et 100")
-        console.error("Erreur : Quantité et/ou Couleur invalides")
-        return true
-    }
-}
-
 //*------------------------------------------------------------------------
 //* Confirmer l'achat à l'aide d'indications visuelles :
 //*------------------------------------------------------------------------
@@ -195,7 +178,6 @@ function purchaseConfirmation(purchase) {
     // Change le style visuel du bouton d'achat
     document.querySelector("#addToCart").style.color = "rgb(0, 205, 0)";
     document.querySelector("#addToCart").textContent = "Produit ajouté !";
-
 }
 
 //*------------------------------------------------------------------------
@@ -216,4 +198,8 @@ function resetButton() {
     });
 }
 
-
+// // console.log("Panier :", myCart);
+// // La variable "purchase" est un objet qui va accueillir les informations du produit
+// let purchase = {};
+// // id du procuit
+// purchase._id = id;
