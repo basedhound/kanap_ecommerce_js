@@ -1,218 +1,222 @@
-//*--------------------------------------------------------------------------
-//* Variables principales
-//*--------------------------------------------------------------------------
-const myCart = JSON.parse(localStorage.getItem("Cart"))
-// console.log("Mon Panier :", myCart)
+//*--------------------------------------------------------------
+//* MAIN | Variables / Constantes / Appels de Fonctions
+//*--------------------------------------------------------------
+// Formulaire : Écoute des inputs pour contrôle validité
+listenToForm()
 
-// Bouton "Commander" => Appel de la fonction "submitForm"
-listenForm()
-
+// Formulaire : Bouton "Commander"
 const orderButton = document.querySelector("#order")
+// => Appel de la fonction "submitForm"
 orderButton.addEventListener("click", (e) => submitForm(e))
 
 //*------------------------------------------------------------------------
-//* Récupération de l'objet produit à afficher via l'API
+//* FETCH | Récupération et Transmission des données de l'API
 //*------------------------------------------------------------------------ 
 fetch("http://localhost:3000/api/products")
-    .then((response) => response.json())
+    // Obtention des données de l'API => conversion du résultat en .json
+    .then((res) => res.json())
+    // Les données sont transmises sous forme de paramètre : "products" [...]     
     .then((products) => {
-        console.log("Produits API :", products);
-        // appel de la fonction affichagePanier
-        getProducts(products);
+        console.log("API :", products)
+        // Appel de la fonction "getProducts" + paramètre "products"
+        getPurchaseData(products)
     })
-    .catch((error) => {
-        document.querySelector("#cartAndFormContainer").innerHTML = "<h1>erreur 404</h1>";
-        console.log("API - erreur 404 : " + error);
-    });
+    // Si ERREUR : Affichage via HTML + console
+    .catch((err) => {
+        document.querySelector("#cartAndFormContainer").innerHTML = "<h1>erreur 404</h1>"
+        console.log("API - erreur 404 : " + err)
+    })
 
 //*---------------------------------------------------------------------
-//* Fonction détermine les conditions d'affichage des produits du panier
+//* Récupération/Ajout des données non-stockées dans le Local Storage
 //*---------------------------------------------------------------------
-function getProducts(product) {
-    // on récupère le panier converti
+function getPurchaseData(products) {
+    // Récupération de notre panier "Cart"
     const myCart = JSON.parse(localStorage.getItem("Cart"));
-    // si il y a un panier avec une taille differante de 0 (donc supérieure à 0)
-    if (myCart && myCart.length != 0) {
-        // zone de correspondance clef/valeur de l'api et du panier grâce à l'id produit choisit dans le localStorage
+    // Si mon panier n'est pas vide [...]
+    if (myCart != null) {
+        // Boucle sur les produits du panier 
         for (let purchase of myCart) {
-            for (let g = 0, h = product.length; g < h; g++) {
-                if (purchase.id === product[g]._id) {
-                    // création et ajout de valeurs à panier qui vont servir pour les valeurs dataset
-                    purchase.name = product[g].name;
-                    purchase.price = product[g].price;
-                    purchase.imageUrl = product[g].imageUrl;
-                    purchase.altTxt = product[g].altTxt;
-                    purchase.description = product[g].description;
+            // Boucle sur les produits de l'API
+            for (let a = 0, b = products.length; a < b; a++) {
+                // Si id produit PANIER = id produit API
+                if (purchase.id === products[a]._id) {
+                    // Récupération des informations manquantes
+                    purchase.name = products[a].name;
+                    purchase.price = products[a].price;
+                    purchase.imageUrl = products[a].imageUrl;
+                    purchase.altTxt = products[a].altTxt;
+                    purchase.description = products[a].description;
                 }
             }
         }
+        // Affichage console : 
+        // "myCart" possède les valeurs du Local Storage + celles récupérées au dessus
+        // Les valeurs récupérées ne sont pas envoyées au Local Storage
         console.log("Panier :", myCart)
-        // on joue affiche,  panier a des clefs/valeurs ajoutés que l'on a pas remonté dans le local storage et sont pourtant réèlles
-        // ici panier à les valeurs du local storage + les valeurs définies au dessus
-        //on demande à affiche() de jouer avec les données panier 
-        //les valeurs ajoutés à panier ont un scope agrandi puisque appelé via la fonction affiche() d'ailleur dans affiche() il n'y a pas d'appel à panier de local storage.
+        // Appel de la fonction "hydrateCart" + paramètre "myCart" qui cumule les valeurs
         hydrateCart(myCart);
     }
     else {
-        // Si le panier est vide : 
+        // Si le Panier est vide : 
         document.querySelector("#totalQuantity").innerHTML = "0";
         document.querySelector("#totalPrice").innerHTML = "0";
         document.querySelector("h1").innerHTML =
             "Vous n'avez pas d'article dans votre panier";
     }
-    // reste à l'écoute grâce aux fonctions suivantes pour modifier l'affichage
-    updateQuantity();
-    deletePurchase();
 }
 
 //*--------------------------------------------------------------
-//* Fonction d'affichage d'un panier (tableau)
+//* Affichage du Panier
 //* --------------------------------------------------------------
 function hydrateCart(myCart) {
-    // on déclare et on pointe la zone d'affichage
-    let cartArea = document.querySelector("#cart__items");
-    // on créait les affichages des produits du panier via un map et introduction de dataset dans le code
+    // Déclaration + Pointage de la zone d'affichage du Panier
+    const cartArea = document.querySelector("#cart__items");
+    // Création du HTML dynamique : Méthode .map() + introduction de data-set
     cartArea.innerHTML += myCart.map((purchase) =>
         `<article class="cart__item" data-id="${purchase.id}" data-color="${purchase.color}" data-quantity="${purchase.quantity}" data-price="${purchase.price}"> 
-      <div class="cart__item__img">
-        <img src="${purchase.imageUrl}" alt="${purchase.altTxt}">
-      </div>
-      <div class="cart__item__content">
-        <div class="cart__item__content__titlePrice">
-          <h2>${purchase.name}</h2>
-          <span>Couleur : ${purchase.color}</span>
-          <p data-price="${purchase.price}">Prix : ${purchase.price} €</p>
+        <div class="cart__item__img">
+            <img src="${purchase.imageUrl}" alt="${purchase.altTxt}">
         </div>
-        <div class="cart__item__content__settings">
-          <div class="cart__item__content__settings__quantity">
-            <p>Quantité : </p>
-            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${purchase.quantity}">
-          </div>
-          <div class="cart__item__content__settings__delete">
-            <p class="deleteItem" data-id="${purchase.id}" data-color="${purchase.color}">Supprimer</p>
-          </div>
+        <div class="cart__item__content">
+            <div class="cart__item__content__titlePrice">
+                <h2>${purchase.name}</h2>
+                <span>Couleur : ${purchase.color}</span>
+                <p data-price="${purchase.price}">Prix : ${purchase.price} €</p>
+            </div>
+            <div class="cart__item__content__settings">
+                <div class="cart__item__content__settings__quantity">
+                    <p>Quantité : </p>
+                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${purchase.quantity}">
+                </div>
+                <div class="cart__item__content__settings__delete">
+                <p class="deleteItem" data-id="${purchase.id}" data-color="${purchase.color}">Supprimer</p>
+                </div>
+            </div>
         </div>
-      </div>
     </article>`
-    ).join(""); //on remplace les virgules de jonctions des objets du tableau par un vide
-    // reste à l'écoute des modifications de quantité pour l'affichage et actualiser les données      
-    totalCart();
+    ).join("")
+    // ".join()" permet de définir la jonction entre chaque <article> affiché
+    // Par défaut c'est une virgule, on la remplace par un espace vide
 
+    // Appel des fonctions pour écoute : 
+    updateQuantity() // Modification de la quantité
+    deletePurchase() // Suppression d'un produit
+    totalCart() // Calcul total produits/prix panier
 }
 
 //* --------------------------------------------------------------
-//* on modifie dynamiquement les quantités du panier
+//* Modification de la Quantité d'un Produit
 //* --------------------------------------------------------------
 function updateQuantity() {
+    // Déclaration + Pointage de tous les éléments ".cart__item"
     const cartArea = document.querySelectorAll(".cart__item");
-    // manière de regarder ce que l'on a d'affiché dynamiquement grace au dataset
-    // cartArea.forEach((purchase) => { console.log("item panier en dataset: " + " " + purchase.dataset.id + " " + purchase.dataset.color + " " + purchase.dataset.quantity); });
-    // On écoute ce qu'il se passe dans itemQuantity de l'article concerné
+
+    // Écoute des évènements (eQuantity) sur chaque article (".itemQuantity")
     cartArea.forEach((purchase) => {
-        purchase.addEventListener("change", (eq) => {
-            // vérification d'information de la valeur du clic et son positionnement dans les articles
-            const myCart = JSON.parse(localStorage.getItem("Cart"));
-            // boucle pour modifier la quantité du produit du panier grace à la nouvelle valeur
+        purchase.addEventListener("change", (eQuantity) => {
+            const myCart = JSON.parse(localStorage.getItem("Cart"))
+            // Boucle sur les produits du Panier
             for (product of myCart)
                 if (
+                    // Si id + color similaires
                     product.id === purchase.dataset.id &&
                     purchase.dataset.color === product.color
                 ) {
-                    product.quantity = Math.min(eq.target.value, 100);
-                    localStorage.Cart = JSON.stringify(myCart);
-                    // on met à jour le dataset quantité
-                    purchase.dataset.quantity = eq.target.value;
-                    // on joue la fonction pour actualiser les données
+                    // Modification de la quantité
+                    product.quantity = Math.min(eQuantity.target.value, 100)
+                    // Envoi au Local Storage
+                    localStorage.Cart = JSON.stringify(myCart)
+                    // Mise à jour du dataset quantity
+                    purchase.dataset.quantity = eQuantity.target.value
+                    // Appel de la fonction de Total dynamique
                     totalCart();
                 }
-            console.log("Produit modifié :", product)
+            console.log("Article modifié :", product.name, purchase.dataset.color)
             console.log("Panier mis à jour :", myCart)
-        });
-
-    });
+        })
+    })
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Calcul et Affichage du Total Panier : Quantité + Prix
 //*--------------------------------------------------------------
 function totalCart() {
-    // déclaration variable en tant que nombre
-    let totalArticle = 0;
-    // déclaration variable en tant que nombre
-    let totalPrice = 0;
-    // on pointe l'élément
-    const purchases = document.querySelectorAll(".cart__item");
-    // pour chaque élément cart
+    // Déclaration des variables de "Total" en tant que Number
+    let totalProducts = 0
+    let totalPrice = 0
+    // Déclaration + Pointage de tous les éléments ".cart__item"
+    const purchases = document.querySelectorAll(".cart__item")
+    // Boucle : pour chaque élément "purchase" des purchaseS
     purchases.forEach((purchase) => {
-        //je récupère les quantités des produits grâce au dataset
-        totalArticle += JSON.parse(purchase.dataset.quantity);
-        // je créais un opérateur pour le total produit grâce au dataset
-        totalPrice += purchase.dataset.quantity * purchase.dataset.price;
+        // Récupération des quantités des produits via les dataset
+        totalProducts += JSON.parse(purchase.dataset.quantity)
+        // Calcul de prix panier total via les dataset
+        totalPrice += purchase.dataset.quantity * purchase.dataset.price
     });
-    // je pointe l'endroit d'affichage nombre d'article
-    document.getElementById("totalQuantity").textContent = totalArticle;
-    // je pointe l'endroit d'affichage du prix total
-    document.getElementById("totalPrice").textContent = totalPrice;
-    //   totalPriceDiv.textContent = totalPrice
+    // Affichage des résultats dans le HTML
+    document.getElementById("totalQuantity").textContent = totalProducts
+    document.getElementById("totalPrice").textContent = totalPrice
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Suppression du Panier : Local Storage + Affichage HTML
 //*--------------------------------------------------------------
 function deletePurchase() {
-    // déclaration de variables
-    const deletePurchase = document.querySelectorAll(".cart__item .deleteItem");
-    // pour chaque élément cartdelete
+    // Déclaration + Pointage de tous les éléments ".cart__item .deleteItem"
+    const deletePurchase = document.querySelectorAll(".cart__item .deleteItem")
+    // Pour chaque éléments [...]
     deletePurchase.forEach((purchase) => {
-        // On écoute s'il y a un clic dans l'article concerné
+        // Écoute du click sur bouton "Supprimer" de chaque produit
         purchase.addEventListener("click", () => {
-            // appel de la ressource du local storage
-            const myCart = JSON.parse(localStorage.getItem("Cart"));
-            for (let d = 0, c = myCart.length; d < c; d++)
+            // Appel du Panier en Local Storage
+            let myCart = JSON.parse(localStorage.getItem("Cart"))
+            // Boucle : Pour chaque élément du Panier [...]
+            for (let a = 0, b = myCart.length; a < b; a++)
                 if (
-                    myCart[d].id === purchase.dataset.id &&
-                    myCart[d].color === purchase.dataset.color
+                    // Si correspondance Panier/dataset (id/color)
+                    myCart[a].id === purchase.dataset.id &&
+                    myCart[a].color === purchase.dataset.color
                 ) {
-                    // déclaration de variable utile pour la suppression
-                    const num = [d];
-                    // création d'un tableau miroir, voir mutation
-                    let newCart = JSON.parse(localStorage.getItem("Cart"));
-                    //suppression de 1 élément à l'indice num
-                    newCart.splice(num, 1);
+                    // Variable utile pour suppression
+                    const picked = [a];
+                    // Suppression de 1 élément à l'indice num
+                    myCart.splice(picked, 1)
+                    // Renvoi du (nouveau) panier converti dans le Local Storage 
+                    localStorage.Cart = JSON.stringify(myCart)
 
-                    // suppression visuelle de l'élément sur la page, évite de devoir reload la page
-                    const productToDelete = document.querySelector(
-                        `article[data-id="${purchase.dataset.id}"][data-color="${purchase.dataset.color}"]`
-                    )
-                    productToDelete.remove()
+                    // Suppression de l'Affichage HTML
+                    const displayToDelete = document.querySelector(
+                        `article[data-id="${purchase.dataset.id}"][data-color="${purchase.dataset.color}"]`)
+                    displayToDelete.remove()
 
-                    // on renvoit le nouveau panier converti dans le local storage et on joue la fonction
-                    localStorage.Cart = JSON.stringify(newCart);
-                    console.log("Panier mis à jour :", newCart)
+                    // Confirmation(s) de la console
+                    console.log("Article supprimé")
+                    console.log("Panier mis à jour :", myCart)
 
-                    //affichage informatif
-                    if (newCart && newCart.length == 0) {
-                        window.localStorage.clear();
-                        // si il n'y a pas de panier on créait un H1 informatif et quantité appropriées
-                        document.querySelector("#totalQuantity").innerHTML = "0";
-                        document.querySelector("#totalPrice").innerHTML = "0";
+                    // Si Panier vide
+                    if (myCart && myCart.length == 0) { 
+                        // Vider Local Storage ([] vide)                       
+                        window.localStorage.clear() 
+                        // Affichage informatif
+                        document.querySelector("#totalQuantity").innerHTML = "0"
+                        document.querySelector("#totalPrice").innerHTML = "0"
                         document.querySelector("h1").innerHTML =
-                            "Vous n'avez pas d'article dans votre panier";
+                            "Vous n'avez pas d'article dans votre panier"
                     }
-
-                    totalCart(); // logique mais pas obligatoire à cause du reload plus bas qui raffraichit l'affichage; serait necessaire avec suppression sans reload
-                    // on recharge la page qui s'affiche sans le produit grace au nouveau panier
-                    // return location.reload();
+                    totalCart(); // Appel de la fonction Total Quantité/Prix
                 }
-        });
-    });
+        })
+    })
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Écoute des champs "input" du Formulaire de commande
 //*--------------------------------------------------------------
-function listenForm() {
+function listenToForm() {
+    // Déclaration + Pointage de l'élément 
     let firstNameField = document.querySelector('#firstName')
+    // Écoute d'évènement au niveau de l'input
     firstNameField.addEventListener('input', checkFirstName)
 
     let lastNameField = document.querySelector('#lastName')
@@ -229,28 +233,24 @@ function listenForm() {
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Envoi du Formulaire de commande
 //*--------------------------------------------------------------
-function submitForm(e) {
-    // e.preventDefault()
-    const valueFirstName = document.getElementById("firstName").value
-    const valueLastName = document.getElementById("lastName").value
-    const valueAddress = document.getElementById("address").value
-    const valueCity = document.getElementById("city").value
-    const valueEmail = document.getElementById("email").value
+function submitForm(e) {  
+    e.preventDefault()
+    // Déclaration et pointage des éléments nécéssaires
+    const myCart = JSON.parse(localStorage.getItem("Cart"))
+    const firstName = document.getElementById("firstName").value
+    const lastName = document.getElementById("lastName").value
+    const address = document.getElementById("address").value
+    const city = document.getElementById("city").value
+    const email = document.getElementById("email").value
+    // Constante Appel des fonctions de validation
+    const formValid = checkEmail() && checkAddress() && checkCity() && checkFirstName() && checkLastName()
 
-    const myCart = JSON.parse(localStorage.getItem("Cart"));
-    const valideForm = checkEmail() && checkAddress() && checkCity() && checkFirstName() && checkLastName()
+    // Conditions nécessaires à la validation finale du formulaire : 
+    if (myCart !== null && [firstName, lastName, address, city, email] !== '' && formValid) {
 
-    if (myCart != null &&
-        valueFirstName !== '' &&
-        valueLastName !== '' &&
-        valueAddress !== '' &&
-        valueCity !== '' &&
-        valueEmail !== '' &&
-        valideForm) {
-
-        // Récupérer les id(s) des produits dans mon panier
+        // Récupération des id(s) Produits du Panier
         const productsIds = []
         myCart.forEach((purchase) => {
             productsIds.push(purchase.id)
@@ -263,45 +263,41 @@ function submitForm(e) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-
-                // Create the contact object with the form information
+                // Objet respectant les attentes de l'API
                 contact: {
-                    firstName: valueFirstName,
-                    lastName: valueLastName,
-                    address: valueAddress,
-                    city: valueCity,
-                    email: valueEmail
+                    firstName: firstName,
+                    lastName: lastName,
+                    address: address,
+                    city: city,
+                    email: email
                 },
-
-                // Sending the productsID array as the variable "products" 
                 products: productsIds
             })
-
         })
             .then(res => res.json())
             .then(res => {
                 console.log("Formulaire de commande : ", res)
                 alert("Votre commande a été effectuée !")
-                window.location.href = (`./confirmation.html?orderId=${res.orderId}`)
+                // Redirection vers la page de Confirmation
+                // window.location.href = (`./confirmation.html?orderId=${res.orderId}`)
                 // window.location.replace(`./confirmation.html?orderId=${res.orderId}`)
-
             })
             .catch((err) => {
                 alert(err.message)
                 console.log(err)
             })
     } else {
+        // Si erreur : 
         e.preventDefault()
-        console.error("Champs invalides")
+        console.error("Champs invalides et/ou Panier vide")
         alert("Formulaire invalide et/ou Panier vide.\nNote : TOUS les champs sont requis !")
     }
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Contrôle du Formulaire : Prénom
 //*--------------------------------------------------------------
 function checkFirstName() {
-
     let firstNameInput = document.getElementById("firstName")
     let firstNameValidate = document.getElementById("firstName").value
     let firstNameErrorMsg = document.getElementById("firstNameErrorMsg")
@@ -313,7 +309,8 @@ function checkFirstName() {
     if (firstNameResult == false) {
         firstNameInput.style.backgroundColor = "red"
         firstNameInput.style.color = "white"
-        firstNameErrorMsg.innerHTML = `"Prénom" ne doit comporter que des lettres.<br>(Tirets et apostrophes autorisés)<br>Champ requis`
+        firstNameErrorMsg.innerHTML = `"Prénom" ne doit comporter que des lettres.<br>
+                                        (Tirets et apostrophes autorisés)<br>Champ requis`
         firstNameErrorMsg.style.display = "inherit"
         order.disabled = true
         return false
@@ -328,7 +325,7 @@ function checkFirstName() {
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Contrôle du Formulaire : Nom
 //*--------------------------------------------------------------
 function checkLastName() {
     let lastNameInput = document.getElementById("lastName")
@@ -341,7 +338,8 @@ function checkLastName() {
     if (lastNameResult == false) {
         lastNameInput.style.backgroundColor = "red"
         lastNameInput.style.color = "white"
-        lastNameErrorMsg.innerHTML = `"Nom" ne doit comporter que des lettres.<br>(Tirets et apostrophes autorisés)<br>Champ requis"`
+        lastNameErrorMsg.innerHTML = `"Nom" ne doit comporter que des lettres.<br>
+                                        (Tirets et apostrophes autorisés)<br>Champ requis"`
         lastNameErrorMsg.style.display = "inherit"
         return false
     } else {
@@ -353,7 +351,7 @@ function checkLastName() {
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Contrôle du Formulaire : Adresse
 //*--------------------------------------------------------------
 function checkAddress() {
     let addressInput = document.getElementById("address")
@@ -378,7 +376,7 @@ function checkAddress() {
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Contrôle du Formulaire : Ville
 //*--------------------------------------------------------------
 function checkCity() {
     let cityInput = document.getElementById("city")
@@ -391,7 +389,8 @@ function checkCity() {
     if (cityResult == false || cityInput.value.length === 0) {
         cityInput.style.backgroundColor = "red"
         cityInput.style.color = "white"
-        cityErrorMsg.innerHTML = "Votre ville ne doit comporter que des lettres.<br>(Tirets et apostrophes autorisés)<br>Champ requis"
+        cityErrorMsg.innerHTML = `Votre ville ne doit comporter que des lettres.<br>
+                                    (Tirets et apostrophes autorisés)<br>Champ requis`
         cityErrorMsg.style.display = "inherit"
         return false
     } else {
@@ -403,7 +402,7 @@ function checkCity() {
 }
 
 //*--------------------------------------------------------------
-//* Fonction ajout nombre total produit et coût total
+//* Contrôle du Formulaire : Email
 //*--------------------------------------------------------------
 function checkEmail() {
     let emailInput = document.getElementById("email")

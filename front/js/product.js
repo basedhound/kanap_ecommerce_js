@@ -1,60 +1,56 @@
-//*--------------------------------------------------------------------------
-//* Récupérer l'ID du produit via l'URL 
-//*--------------------------------------------------------------------------
-// Constante "params" : récupère l'URL de la page affichée
-const params = new URLSearchParams(window.location.search);
-// Constante "id" : récupère la valeur du paramètre "id" dans l'URL (id=...)
-const id = params.get("id");
-console.log("ID du produit à afficher :", id);
+//*--------------------------------------------------------------
+//* MAIN | Variables / Constantes / Appels de Fonctions
+//*--------------------------------------------------------------
+// Récupération de la valeur "id" dans l'URL (id=...)
+const id = new URLSearchParams(window.location.search).get("id")
+console.log("ID du produit à afficher :", id)
 
-//*--------------------------------------------------------------------------
-//* Déclaration du panier "Cart" (key) dans le localStorage
-//*--------------------------------------------------------------------------
-// La variable "cart" donne accès au contenu du localStorage, dans la clée "cart"
-let myCart = JSON.parse(localStorage.getItem("Cart")) 
-console.log(myCart)
+// Récupération de la clé "Cart" (Panier) dans le Local Storage
+let myCart = JSON.parse(localStorage.getItem("Cart"))
+console.log("Panier :", myCart)
 
 //*------------------------------------------------------------------------
-//* Récupération de l'objet produit à afficher via l'API
+//* FETCH | Récupération de l'objet "produit" à afficher via l'API
 //*------------------------------------------------------------------------ 
 // fetch(`http://localhost:3000/api/products/${id}`)
 fetch(`http://localhost:3000/api/products`)
-    .then((response) => response.json())
+    // Obtention des données de l'API => conversion du résultat en .json
+    .then((res) => res.json())
+    // Les données sont transmises sous forme de paramètre : "products" [...]        
     .then((products) => {
-        // Appel de la fonction "hydrateProduct"    
-        hydrateProduct(products);
+        // Appel de la fonction "hydrateProducts" + paramètre "products"
+        hydrateProduct(products)
     })
-    // Si ERREUR : Remplacer titre par un h1 "erreur 404" et renvoit en console l'erreur.
-    .catch((error) => {
+    // Si ERREUR : Affichage via HTML + console
+    .catch((err) => {
         document.querySelector(".item").innerHTML = "<h1>erreur 404</h1>";
-        console.error("API - erreur 404 : " + error);
+        console.error("API - erreur 404 : " + err)
     });
 
 //*------------------------------------------------------------------------
-//* Affichage du Produit
+//* Affichage du Produit 
 //*------------------------------------------------------------------------
 function hydrateProduct(products) {
-    // boucle for pour chercher un indice
+    // Boucle for : Pour chaque indice (product) des données (products) de l'API
     for (const product of products) {
-        //si id (définit par l'url) est identique à un _id d'un des produits du tableau, on récupère son indice de tableau qui sert pour les éléments produit à ajouter
+        // Si "id" de l'URL est identique à un "_id" de l'API [...] 
+        // Récupération des données liées à cet "_id" (name, price, description, image...)
         if (id === product._id) {
 
-            // Titre de la page (affiché dans l'onglet)
-            document.title = product.name
+            // Titre de la page : Affichage dans l'onglet de navigation
+            document.title = `${product.name} | Kanap`
 
-            // Éléments : Nom, Prix, Description
+            // Nom, Prix, Description
             document.querySelector('#title').textContent = product.name
             document.querySelector('#price').textContent = product.price
             document.querySelector('#description').textContent = product.description
 
-            // Élément : Image (+alt) 
+            // Image + Alt
             const imageParent = document.querySelector(".item__img")
             const image = document.createElement("img")
             image.src = product.imageUrl
             image.alt = product.altTxt
             imageParent.appendChild(image)
-            // const image = document.querySelector("article div.item__img");
-            // image.innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}">`
 
             // Éléments : Couleurs disponibles
             const colorsParent = document.querySelector("#colors")
@@ -64,96 +60,104 @@ function hydrateProduct(products) {
                 colorSettings.value = color
                 colorSettings.textContent = color
                 colorsParent.appendChild(colorSettings)
-                // colorsParent.innerHTML += `<option value="${color}">${color}</option>`;
             })
+            // Confirmation de l'affichage dans la console
             console.log(`${product.name} est affiché`);
+            // Appel de la fonction + transmission du paramètre "product"
             productToPurchase(product)
         }
     }
 }
 
 //*------------------------------------------------------------------------
-//* Lancer procédure d'achat : Créer objet "Purchase" + Appel des fonctions
+//* Création d'un objet "Purchase" au clic du bouton "addToCart"
 //*------------------------------------------------------------------------
 function productToPurchase(product) {
-    // On écoute ce qu'il se passe dans :
-    const button = document.querySelector('#addToCart')
-    button.addEventListener("click", () => {
-        // On récupére les valeurs de #colors & #quantity
+    // Écoute de l'élément #addToCart via méthode "addEventListener"
+    const buttonAddToCart = document.querySelector('#addToCart')
+    buttonAddToCart.addEventListener("click", () => {
+        // Récupération des valeurs input de #colors & #quantity
         const color = document.querySelector('#colors').value
         const quantity = document.querySelector('#quantity').value
-        // On crée un objet qui recueille les valeurs de l'achat
+        // Création de la classe qui sera utilisée pour ajouter au panier
         const purchase = {
             id: product._id,
             color: color,
             quantity: Number(quantity),
-            // price: product.price,
-            // image: product.imageUrl,
-            // altText: product.altTxt,
             name: product.name
         }
-        console.log("Produit en attente :", purchase)
 
-        // Contrôler la validité de l'achat (couleur, quantité)
-        if (purchaseInvalid(color, quantity)) return
-        // Ajouter un produit au panier
-        addToCart(product, purchase, color)
-        // Réinitialiser le style du bouton "Ajouter au panier" après un achat
+        // Contrôle de la validité de l'achat (Couleur / Quantité)
+        if (purchaseInvalid(purchase, color, quantity)) return
+        // Ajout du produit au Panier du Local Storage
+        addToCart(purchase, color)
+        // Réinitialisation du bouton "Ajouter au panier" après un achat
         resetButton()
     })
 }
 
 //*------------------------------------------------------------------------
-//* Contrôler la validité de l'achat : 
+//* Contrôle de la validité d'ajout au panier
 //*------------------------------------------------------------------------
-function purchaseInvalid(color, quantity) {
-    if (!color || !quantity || quantity == 0 || quantity < 1 || quantity > 100) {
-        alert("Pour valider le choix de cet article, veuillez renseigner une couleur, et/ou une quantité entre 1 et 100")
-        console.error("Erreur : Quantité et/ou Couleur invalides")
+function purchaseInvalid(purchase, color, quantity) {
+    // Invalide si : Couleur non définie / Quantité inféreure à 1 ou supérieure à 100 [...]
+    if (!color || quantity < 1 || quantity > 100) {
+        console.error("Produit en attente :", purchase)
+        console.error(`Erreur : Couleur et/ou Quantité invalides pour ${purchase.name}`)
+        alert(`Pour valider le choix de ${purchase.name} : \nVeuillez renseigner une couleur, et/ou une quantité entre 1 et 100`)
         return true
     }
 }
 
 //*------------------------------------------------------------------------
-//* Ajouter l'article au Panier :
+//* Système d'ajout des produits au Panier 
 //*------------------------------------------------------------------------
-function addToCart(product, purchase, color) {
-    // Variable "myCart"
-    // let myCart = JSON.parse(localStorage.getItem("Cart"))
+function addToCart(purchase, color) {
+    // Déclaration du Panier, clé "Cart" dans Local Storage
+    let myCart = JSON.parse(localStorage.getItem("Cart"))
 
-    // Si "myCart" est vide -> création d'un tableau -> ajout du 1er produit
+    // Si "myCart" est vide -> Création d'un tableau -> Ajout du 1er produit
     if (myCart == null) {
         myCart = []
         myCart.push(purchase)
         localStorage.setItem("Cart", JSON.stringify(myCart))
+        // Confirmation de l'ajout au panier
         purchaseConfirmation(purchase)
     }
 
-    // Si "myCart" n'est pas vide -> boucle sur "myCart" 
+    // Ajouter d'autres produits : 1er cas de figure ->
+    // Si "myCart" n'est pas vide [...]
     else if (myCart != null) {
-        // + Si produit similaire (id/couleur) => Ajout de quantité 
+        // Boucle sur les éléments de "myCart"
         for (i = 0; i < myCart.length; i++) {
             if (
-                myCart[i].id == product._id &&
+                // Si le produit à ajouter est similaire : id/couleur
+                myCart[i].id == purchase.id &&
                 myCart[i].color == color
             ) {
                 return (
+                    // => Ajout de quantité au produit déjà dans le panier
                     myCart[i].quantity = Math.min(myCart[i].quantity + purchase.quantity, 100),
                     localStorage.setItem("Cart", JSON.stringify(myCart)),
+                    // Confirmation de l'ajout au panier
                     purchaseConfirmation(purchase)
-                );
+                )
             }
         }
 
-        // + Si produit similaire (id/couleur) => Ajout d'un nouveau produit dans "myCart"
+        // Ajouter d'autres produits : 2eme cas de figure ->
+        // Boucle sur les éléments de "myCart"
         for (i = 0; i < myCart.length; i++) {
-            if (myCart[i].id == product._id &&
+            // Si produit à ajouter = ID similaire et couleur différente (OU) ID différent
+            if (myCart[i].id == purchase.id &&
                 myCart[i].color != color ||
-                myCart[i].id != product._id
+                myCart[i].id != purchase.id
             ) {
                 return (
+                    // => Ajout d'un nouvel article dans le panier
                     myCart.push(purchase),
                     localStorage.setItem("Cart", JSON.stringify(myCart)),
+                    // Confirmation de l'ajout au panier
                     purchaseConfirmation(purchase)
                 )
             }
@@ -162,44 +166,44 @@ function addToCart(product, purchase, color) {
 }
 
 //*------------------------------------------------------------------------
-//* Confirmer l'achat à l'aide d'indications visuelles :
+//* Confirmation de l'ajout de produit(s) au Panier
 //*------------------------------------------------------------------------
 function purchaseConfirmation(purchase) {
-    console.log("Produit ajouté au Panier : ", purchase)
-    console.log("Panier à jour : ", myCart)
-    // alert(`${purchase.name} option: ${purchase.color} a bien été ajouté au panier !`)
-    // Ouvre une fenêtre dans le navigateur permettant de se diriger vers le panier
+    // Confirmations dans la Console
+    console.log("Produit ajouté au Panier :", purchase)
+    let myCart = JSON.parse(localStorage.getItem("Cart"))
+    console.log("Panier à jour :", myCart)
+
+    // Fenêtre de confirmation dans le navigateur
     if (window.confirm(`${purchase.name} option: ${purchase.color} a bien été ajouté au panier !
         Consuler le Panier [OK] | Rester à ${purchase.name} [Annuler]`)) {
         window.location.href = "cart.html"
     } else {
         window.close
     }
-    // Change le style visuel du bouton d'achat
-    document.querySelector("#addToCart").style.color = "rgb(0, 205, 0)";
-    document.querySelector("#addToCart").textContent = "Produit ajouté !";
+    // Changement du style visuel du bouton "Ajouter au panier" (couleur/texte)
+    document.querySelector("#addToCart").style.color = "rgb(0, 205, 0)"
+    document.querySelector("#addToCart").textContent = "Produit ajouté !"
 }
 
 //*------------------------------------------------------------------------
-//* Réinitialiser le style du bouton "Ajouter au panier" après un achat :
+//* Réinitialisation des styles du Bouton "Ajouter au panier" :
 //*------------------------------------------------------------------------
 function resetButton() {
     // On écoute "#colors"
     let colorSettings = document.querySelector("#colors");
+    // Si évènement sur "input" ...
     colorSettings.addEventListener("input", () => {
+        // Modification du style et texte
         document.querySelector("#addToCart").style.color = "white";
         document.querySelector("#addToCart").textContent = "Ajouter au panier";
     });
     // On écoute 'input[id="quantity"]'
     let quantitySettings = document.querySelector('input[id="quantity"]');
     quantitySettings.addEventListener("input", () => {
+        // Si évènement sur "input" ...
         document.querySelector("#addToCart").style.color = "white";
+        // Modification du style et texte
         document.querySelector("#addToCart").textContent = "Ajouter au panier";
     });
 }
-
-// // console.log("Panier :", myCart);
-// // La variable "purchase" est un objet qui va accueillir les informations du produit
-// let purchase = {};
-// // id du procuit
-// purchase._id = id;
