@@ -21,7 +21,7 @@ fetch("http://localhost:3000/api/products")
 //* Affichage des Produits de l'API
 //*----------------------------------------------------------------------
 function hydrateProducts(products) {
-    // Constante "productsArea" sélectionne la <section> ayant pour id "#items"
+    // Déclaration + Pointage de la <section> ayant pour id "#items"
     const productsArea = document.querySelector("#items")
     // Pour chaque indice "product" de "products" [...]
     for (const product of products) {

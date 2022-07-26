@@ -3,7 +3,7 @@
 //*--------------------------------------------------------------
 const orderId = getOrderId()
 displayOrderId(orderId)
-// cleanCache() 
+cleanCache() 
 
 //*--------------------------------------------------------------
 //* Récupération du Numéro de Commande
@@ -26,7 +26,7 @@ function displayOrderId(orderId) {
 //*--------------------------------------------------------------
 //* Suppression du Panier 
 //*--------------------------------------------------------------
-// function cleanCache() {
-//     const cache = window.localStorage
-//     cache.clear()
-// }
+function cleanCache() {
+    const cache = window.localStorage
+    cache.clear()
+}

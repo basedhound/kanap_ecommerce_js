@@ -5,7 +5,7 @@
 const id = new URLSearchParams(window.location.search).get("id")
 console.log("ID du produit à afficher :", id)
 
-// Récupération de la clé "Cart" (Panier) dans le Local Storage
+// Déclaration d'une clé "Cart" (Panier) dans le Local Storage 
 let myCart = JSON.parse(localStorage.getItem("Cart"))
 console.log("Panier :", myCart)
 
@@ -86,6 +86,7 @@ function productToPurchase(product) {
             quantity: Number(quantity),
             name: product.name
         }
+        console.log(`Préparation de ${purchase.name}:`, purchase)
 
         // Contrôle de la validité de l'achat (Couleur / Quantité)
         if (purchaseInvalid(purchase, color, quantity)) return
@@ -102,7 +103,7 @@ function productToPurchase(product) {
 function purchaseInvalid(purchase, color, quantity) {
     // Invalide si : Couleur non définie / Quantité inféreure à 1 ou supérieure à 100 [...]
     if (!color || quantity < 1 || quantity > 100) {
-        console.error("Produit en attente :", purchase)
+        console.error(`Erreur lors de l'ajout au Panier de ${purchase.name} :`, purchase)
         console.error(`Erreur : Couleur et/ou Quantité invalides pour ${purchase.name}`)
         alert(`Pour valider le choix de ${purchase.name} : \nVeuillez renseigner une couleur, et/ou une quantité entre 1 et 100`)
         return true
@@ -170,7 +171,7 @@ function addToCart(purchase, color) {
 //*------------------------------------------------------------------------
 function purchaseConfirmation(purchase) {
     // Confirmations dans la Console
-    console.log("Produit ajouté au Panier :", purchase)
+    console.log(`${purchase.name} ${purchase.color} ajouté au Panier`, purchase)
     let myCart = JSON.parse(localStorage.getItem("Cart"))
     console.log("Panier à jour :", myCart)
 
