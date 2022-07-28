@@ -1,13 +1,13 @@
+//! NOTE : Les console.log restants seront supprimés avant déploiement du site.
+//! Ils servent ici à illustrer certaines opération lors de la présentation.
+//! Il en va de même pour un certain nombre de commentaires exlicatifs.
+
 //*--------------------------------------------------------------
 //* MAIN | Variables / Constantes / Appels de Fonctions
 //*--------------------------------------------------------------
 // Récupération de la valeur "id" dans l'URL (id=...)
 const id = new URLSearchParams(window.location.search).get("id")
 console.log("ID du produit à afficher :", id)
-
-// Déclaration d'une clé "Cart" (Panier) dans le Local Storage 
-let myCart = JSON.parse(localStorage.getItem("Cart"))
-console.log("Panier :", myCart)
 
 //*------------------------------------------------------------------------
 //* FETCH | Récupération de l'objet "produit" à afficher via l'API

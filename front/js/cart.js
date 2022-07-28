@@ -1,3 +1,7 @@
+//! NOTE : Les console.log restants seront supprimés avant déploiement du site.
+//! Ils servent ici à illustrer certaines opération lors de la présentation.
+//! Il en va de même pour un certain nombre de commentaires exlicatifs.
+
 //*--------------------------------------------------------------
 //* MAIN | Variables / Constantes / Appels de Fonctions
 //*--------------------------------------------------------------
@@ -398,7 +402,7 @@ function checkCity() {
     const cityRGEX = /^(?![\s.]+$)[A-zÀ-ú\s\-']{1,25}$/
     let cityResult = cityRGEX.test(cityValidate)
 
-    if (cityResult == false || cityInput.value.length === 0) {
+    if (cityResult == false) {
         cityInput.style.backgroundColor = "red"
         cityInput.style.color = "white"
         cityErrorMsg.innerHTML = `Champ requis :<br>
