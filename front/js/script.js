@@ -19,7 +19,7 @@ fetch("http://localhost:3000/api/products")
     .catch((err) => {
         document.querySelector(".titles").innerHTML = "<h1>erreur 404</h1>"
         console.error("[API] erreur 404 : " + err)
-    });
+    })
 
 //*----------------------------------------------------------------------
 //* Affichage des Produits de l'API

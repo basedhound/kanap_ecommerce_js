@@ -12,31 +12,25 @@ console.log("ID du produit à afficher :", id)
 //*------------------------------------------------------------------------
 //* FETCH | Récupération de l'objet "produit" à afficher via l'API
 //*------------------------------------------------------------------------ 
-// fetch(`http://localhost:3000/api/products/${id}`)
-fetch(`http://localhost:3000/api/products`)
+fetch(`http://localhost:3000/api/products/${id}`)
     // Obtention des données de l'API => conversion du résultat en .json
     .then((res) => res.json())
-    // Les données sont transmises sous forme de paramètre : "products" [...]        
-    .then((products) => {
-        // Appel de la fonction "hydrateProducts" + paramètre "products"
-        hydrateProduct(products)
+    // Les données sont transmises sous forme de paramètre : "product" [...]        
+    .then((product) => {
+        // Appel de la fonction "hydrateProduct" + paramètre "product"        
+        hydrateProduct(product)
+        console.log(`Données de ${product.name} récupérées :`, product)
     })
     // Si ERREUR : Affichage via HTML + console
     .catch((err) => {
         document.querySelector(".item").innerHTML = "<h1>erreur 404</h1>";
         console.error("API - erreur 404 : " + err)
-    });
+    })
 
 //*------------------------------------------------------------------------
 //* Affichage du Produit 
 //*------------------------------------------------------------------------
-function hydrateProduct(products) {
-    // Boucle for : Pour chaque indice (product) des données (products) de l'API
-    for (const product of products) {
-        // Si "id" de l'URL est identique à un "_id" de l'API [...] 
-        // Récupération des données liées à cet "_id" (name, price, description, image...)
-        if (id === product._id) {
-
+function hydrateProduct(product) {
             // Titre de la page : Affichage dans l'onglet de navigation
             document.title = `${product.name} | Kanap`
 
@@ -61,13 +55,10 @@ function hydrateProduct(products) {
                 colorSettings.textContent = color
                 colorsParent.appendChild(colorSettings)
             })
-            // Confirmation de l'affichage dans la console
-            console.log(`${product.name} est affiché`);
             // Appel de la fonction + transmission du paramètre "product"
             productToPurchase(product)
         }
-    }
-}
+
 
 //*------------------------------------------------------------------------
 //* Création d'un objet "Purchase" au clic du bouton "addToCart"
@@ -103,8 +94,7 @@ function productToPurchase(product) {
 function purchaseInvalid(purchase, color, quantity) {
     // Invalide si : Couleur non définie / Quantité inféreure à 1 ou supérieure à 100 [...]
     if (!color || quantity < 1 || quantity > 100) {
-        console.error(`Erreur lors de l'ajout au Panier de ${purchase.name} :`, purchase)
-        console.error(`Erreur : Couleur et/ou Quantité invalides pour ${purchase.name}`)
+        console.error(`Erreur lors de l'ajout au Panier de ${purchase.name} ! \n Couleur et/ou Quantité invalides :`, purchase)
         alert(`Pour valider le choix de ${purchase.name} : \nVeuillez renseigner une couleur, et/ou une quantité entre 1 et 100`)
         return true
     }
@@ -171,7 +161,7 @@ function addToCart(purchase, color) {
 //*------------------------------------------------------------------------
 function purchaseConfirmation(purchase) {
     // Confirmations dans la Console
-    console.log(`${purchase.name} ${purchase.color} ajouté au Panier`, purchase)
+    console.log(`${purchase.name} ${purchase.color} ajouté au Panier :`, purchase)
     let myCart = JSON.parse(localStorage.getItem("Cart"))
     console.log("Panier à jour :", myCart)
 

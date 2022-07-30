@@ -33,3 +33,4 @@ function cleanCache() {
     const cache = window.localStorage
     cache.clear()
 }
+
