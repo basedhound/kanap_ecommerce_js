@@ -8,7 +8,7 @@ L'objectif est de construire un site e-commerce en Vanilla JavaScript .
 
 - [Plan de test d'acceptation](notes/Kanap%20-%20Plan%20de%20test%20d'acceptation.pdf)
 
-- [Visuels du site](notes/Kanap%20-%20Visuels%20Responsive.pdf)
+- [Aspect visuel du site](notes/Kanap%20-%20Visuels%20Responsive.pdf)
 
 ![banniere du site](/front/images/banniere.png)
 
