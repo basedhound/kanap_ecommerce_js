@@ -23,6 +23,10 @@ L'objectif est de construire un site e-commerce en Vanilla JavaScript .
 - Le serveur devrait se lancer sur localhost port 3000 par défaut. Vous pouvez utiliser l'extension VSCode "Live Server" pour lancer le site depuis "index.html". 
 
 # Compétences évaluées
+- Créer un serveur web simple avec Express 
+- Créer une API REST avec Node, Express et MongoDB 
+- Mettre en place un système d'authentification sur une application Express 
+- Gérer des fichiers utilisateur sur une application Express
 - Interagir avec un web service avec JavaScript
 - Valider des données issues de sources externes
 - Créer un plan de test pour une application
