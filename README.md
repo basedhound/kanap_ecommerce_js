@@ -4,9 +4,11 @@ Quatrième projet du parcours "Développeur web" chez OpenClassrooms.
 
 L'objectif est de construire un site e-commerce en Vanilla JavaScript .
 
-Vous pouvez retrouver le [cahier des charges ici.](notes/Kanap%20-%20Specifications%20fonctionnelles.pdf)
+- Vous pouvez retrouver le [cahier des charges ici.](notes/Kanap%20-%20Specifications%20fonctionnelles.pdf)
 
-Vous pouvez retrouver le [plan de test d'acceptation ici.](notes/Kanap%20-%20Specifications%20fonctionnelles.pdf)
+- Vous pouvez retrouver le [plan de test d'acceptation ici.](notes/Kanap%20-%20Plan%20de%20test%20d'acceptation.pdf)
+
+- Vous pouvez retrouver des [visuels du site ici.](notes/screenshots/)
 
 ![banniere du site](/front/images/banniere.png)
 
@@ -33,7 +35,7 @@ Vous pouvez retrouver le [plan de test d'acceptation ici.](notes/Kanap%20-%20Spe
 - Node.js (API)
 - HTML / CSS (Responsive)
 
-**Interdit :** 
+**Interdites :** 
 - Framework JavaScript
 
 # Scénario
