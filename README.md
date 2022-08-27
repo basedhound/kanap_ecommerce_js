@@ -45,7 +45,6 @@ Votre client est Kanap, une marque de canapés qui vend ses produits depuis sa b
 
 
 # Livrables
-## Pages à intégrer selon les maquettes :
 - **Page d’accueil** 
 1. Affichage dynamique des produits via l'utilisation de l'API Fetch.
 
