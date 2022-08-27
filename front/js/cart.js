@@ -1,7 +1,3 @@
-//! NOTE : Les console.log restants seront supprimés avant déploiement du site.
-//! Ils servent ici à illustrer certaines opération lors de la présentation.
-//! Il en va de même pour un certain nombre de commentaires exlicatifs.
-
 //*--------------------------------------------------------------
 //* MAIN | Variables / Constantes / Appels de Fonctions
 //*--------------------------------------------------------------
@@ -78,7 +74,7 @@ function hydrateCart(myCart) {
                 <img src="${purchase.imageUrl}" alt="${purchase.altTxt}">
             </div>
             <div class="cart__item__content">
-                <div class="cart__item__content__titlePrice">
+                <div class="cart__item__content__description">
                     <h2>${purchase.name}</h2>
                     <span>Couleur : ${purchase.color}</span>
                     <p data-price="${purchase.price}">Prix : ${purchase.price} €</p>
@@ -179,7 +175,7 @@ function deletePurchase() {
                 ) {
                     // Variable utile pour suppression
                     const picked = [a];
-                    // Suppression de 1 élément à l'indice num
+                    // Suppression de 1 élément à l'indice picked
                     myCart.splice(picked, 1)
                     // Renvoi du (nouveau) panier converti dans le Local Storage 
                     localStorage.Cart = JSON.stringify(myCart)

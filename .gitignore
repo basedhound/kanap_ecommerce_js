@@ -1,11 +1,13 @@
-# ignore all logs
+# ENV FILES
+*.env
+
+# GIT FOLDER
+.git/
+
+# LOG FILES
 *.log
 
-# ignore files inside tmp folder
-tmp/*
-
-# ignore node_modules folder
+# NODE MODULES
 node_modules
 
-#
-.git/*
+
