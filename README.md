@@ -15,15 +15,39 @@
 
 ## <br /> <a name="introduction">✨ Introduction</a>
 
-**[EN]** For more information, see the [docs](/docs/) folder.
+**[EN]** This project is the fourth assignment in the "Web Developer" course at OpenClassrooms, aiming to build an e-commerce site using Vanilla JavaScript. The project includes creating a simple web server with Express, developing a REST API with Node, Express, and MongoDB, and implementing an authentication system. The site features dynamic product displays, a shopping cart with localStorage, and a responsive design using HTML and CSS. Key functionalities include dynamic product listing, cart management with real-time updates, and order form validation using REGEX, with a focus on JavaScript without frameworks. For more information, see the [docs](/docs/) folder.
 
-**[FR]** Pour plus d'informations, consultez le dossier [docs](/docs/).
+**[FR]** Ce projet est le quatrième devoir du parcours "Développeur web" chez OpenClassrooms, visant à construire un site e-commerce en JavaScript Vanilla. Le projet inclut la création d'un serveur web simple avec Express, le développement d'une API REST avec Node, Express et MongoDB, et la mise en place d'un système d'authentification. Le site propose des affichages dynamiques de produits, un panier d'achat avec localStorage, et un design responsive utilisant HTML et CSS. Les fonctionnalités clés incluent la liste dynamique des produits, la gestion du panier avec des mises à jour en temps réel, et la validation du formulaire de commande avec REGEX, en se concentrant sur JavaScript sans frameworks. Pour plus d'informations, consultez le dossier [docs](/docs/).
 
 ## <br /> <a name="tech-stack">⚙️ Tech Stack</a>
 
-- **React** is a popular JavaScript library for building user interfaces, particularly single-page applications where data changes over time. React's component-based architecture allows developers to create reusable UI components, making development more efficient and the codebase easier to maintain.
+- **HTML/CSS** are the foundational technologies for building and designing web pages. HTML (HyperText Markup Language) provides the structure of a webpage, while CSS (Cascading Style Sheets) handles the presentation and layout. Together, they enable the creation of responsive and visually appealing web interfaces.
+
+- **Vanilla JavaScript** is a term for using plain JavaScript without any additional libraries or frameworks. It allows for a deep understanding of core JavaScript concepts and provides full control over the code, ensuring high performance and minimal overhead.
+
+- **Node.js** is a JavaScript runtime built on Chrome's V8 JavaScript engine. It allows developers to build scalable network applications using JavaScript on the server side. Node.js is known for its event-driven, non-blocking I/O model, which makes it lightweight and efficient for developing data-intensive real-time applications.
+
+- **Express** is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. It simplifies the development of server-side applications, offering tools for handling HTTP requests, middleware for additional functionality, and routing for defining application endpoints.
+
+- **localStorage** is a web storage API that allows developers to store data persistently in the user's browser. It provides a way to save key-value pairs in a web application, ensuring data is available even after the browser is closed and reopened. This is particularly useful for maintaining user sessions, storing preferences, and managing shopping carts.
+
+- **REGEX** (Regular Expressions) are sequences of characters that define search patterns. They are used for pattern matching within strings, making them a powerful tool for validating input, searching and replacing text, and extracting specific data from strings. In web development, REGEX is commonly used for form validation to ensure user input meets specific criteria.
 
 ## <br/> <a name="features">📝 Features</a>
+👉 **Responsive Design**: Ensures the website is fully functional and visually appealing across all devices and screen sizes.
+
+👉 **Dynamic Product Display**: Uses Vanilla JavaScript and Fetch API to load and display products dynamically from the server.
+
+👉 **Dynamic Cart Product Display**: Shows products added to the cart with real-time updates.
+
+👉 **Real-Time Price/Quantity Calculation**: Automatically calculates the total price and quantity of items in the cart.
+
+👉 **Cart Management**: Allows modification of item quantities and removal of products directly from the cart.
+
+👉 **Order Form with REGEX Validation**: Features a comprehensive order form with validation using regular expressions to ensure accurate user input.
+
+👉 **Order Confirmation Number**: Retrieves and displays an order number sent by the API upon successful purchase.
+
 
 ## <br /> <a name="quick-start">🚀 Quick Start</a>
 
@@ -85,62 +109,3 @@ yarn start
 ```
   
 Running on [`http://localhost:3000`](http://localhost:3000)
-
-
-
-
-
-
-
-
-
-
-
-
-# Kanap
-
-Quatrième projet du parcours "Développeur web" chez OpenClassrooms.
-
-L'objectif est de construire un site e-commerce en Vanilla JavaScript .
-
-# Compétences évaluées
-
-- Créer un serveur web simple avec Express
-- Créer une API REST avec Node, Express et MongoDB
-- Mettre en place un système d'authentification sur une application Express
-- Gérer des fichiers utilisateur sur une application Express
-- Interagir avec un web service avec JavaScript
-- Valider des données issues de sources externes
-- Créer un plan de test pour une application
-- Gérer des événements JavaScript
-
-# Technologies
-
-**Utilisées :**
-
-- JavaScript Vanilla
-- Node.js (API)
-- HTML / CSS (Responsive)
-
-**Interdites :**
-
-- Framework JavaScript
-
-# Livrables
-
-- **Page d’accueil**
-
-1. Affichage dynamique des produits via l'utilisation de l'API Fetch.
-
-- **Page Produit**
-
-1. Affichage dynamique du produit choisi sur l'accueil via l'utilisation de l'API Fetch.
-2. Système d'ajout Panier via l'utilisation du localStorage.
-
-- **Page Panier**
-
-1. Affichage dynamique des produits ajoutés au Panier.
-2. Calcul dynamique des totaux prix/quantité d'articles.
-3. Modification de la quantité, suppression d'article, depuis le Panier.
-4. Formulaire de commande, utilisation de REGEX.
-5. Récupérer un numéro de commande envoyé par l'API après succès de l'achat.
