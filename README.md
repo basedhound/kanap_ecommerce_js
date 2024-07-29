@@ -53,9 +53,13 @@ git clone {git remote URL}
 
 <br/>**Installation**
 
-Let's install the project dependencies, from your terminal, run:
+Let's install the project dependencies for the server. From your terminal, run:
 
 ```bash
+# Navigate to the server directory
+cd server
+
+# Install the necessary dependencies 
 npm install
 # or
 yarn install
@@ -65,41 +69,39 @@ yarn install
 
 Installation will take a minute or two, but once that's done, you should be able to run the following command:
 
-```bash
-npm run dev
-# or
-yarn dev
-```
-
 - **Client**: Use [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) to launch a development local server with live reload feature for static & dynamic pages.
 
-- **Server**: Running on [`http://localhost:3000`](http://localhost:3000)
+- **Server**:  
+```bash
+# Navigate to the server directory
+cd server
 
-Open [`http://localhost:3000`](http://localhost:3000) in your browser to view the project.
+# Start server
+nodemon server.js
+# or
+npm start
+# or
+yarn start
+```
+  
+Running on [`http://localhost:3000`](http://localhost:3000)
+
+
+
+
+
+
+
+
+
+
+
 
 # Kanap
 
 Quatrième projet du parcours "Développeur web" chez OpenClassrooms.
 
 L'objectif est de construire un site e-commerce en Vanilla JavaScript .
-
-- [Cahier des charges](notes/Kanap%20-%20Specifications%20fonctionnelles.pdf)
-
-- [Plan de test d'acceptation](notes/Kanap%20-%20Plan%20de%20test%20d'acceptation.pdf)
-
-- [Aspect visuel du site](notes/Kanap%20-%20Aspect%20visuel.pdf)
-
-![banniere du site](/front/images/banniere.png)
-
-# Lancement
-
-- Prérequis : Node.js et NPM installés sur votre ordinateur
-
-- Installation Backend : Depuis le dossier "back", lancez "npm install" depuis votre environnement de développement/Terminal.
-
-- Lancement Serveur : Depuis le dossier "back", lancez "node serveur.js" depuis votre environnement de développement/Terminal.
-
-- Le serveur devrait se lancer sur localhost port 3000 par défaut. Vous pouvez utiliser l'extension VSCode "Live Server" pour lancer le site depuis "index.html".
 
 # Compétences évaluées
 
@@ -123,12 +125,6 @@ L'objectif est de construire un site e-commerce en Vanilla JavaScript .
 **Interdites :**
 
 - Framework JavaScript
-
-# Scénario
-
-Vous êtes en poste dans une agence de développement web depuis quelques semaines maintenant. Après avoir réalisé avec succès l’intégration de quelques sites web (HTML/CSS), on vous confie une nouvelle mission.
-
-Votre client est Kanap, une marque de canapés qui vend ses produits depuis sa boutique exclusivement. Aujourd’hui, celle-ci souhaiterait avoir une plateforme de e-commerce en plus de sa boutique physique pour vendre ses produits sur Internet.
 
 # Livrables
 
