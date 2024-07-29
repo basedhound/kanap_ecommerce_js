@@ -34,9 +34,9 @@
 - **REGEX** (Regular Expressions) are sequences of characters that define search patterns. They are used for pattern matching within strings, making them a powerful tool for validating input, searching and replacing text, and extracting specific data from strings. In web development, REGEX is commonly used for form validation to ensure user input meets specific criteria.
 
 ## <br/> <a name="features">📝 Features</a>
-👉 **Responsive Design**: Ensures the website is fully functional and visually appealing across all devices and screen sizes.
+👉 **Responsive Design**: Ensures the website is fully functional and visually appealing across all devices.
 
-👉 **Dynamic Product Display**: Uses Vanilla JavaScript and Fetch API to load and display products dynamically from the server.
+👉 **Dynamic Product Display**: Uses JavaScript and Fetch API to display products dynamically from the server.
 
 👉 **Dynamic Cart Product Display**: Shows products added to the cart with real-time updates.
 
