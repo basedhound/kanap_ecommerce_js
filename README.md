@@ -1,6 +1,6 @@
 <div align="center">
     <a href="" target="_blank">
-      <img src=".docs/preview.webp" alt="Project Banner">
+      <img src=".docs/preview.png" alt="Project Banner">
     </a>
   <h3 align="center">Kanap E-Commerce</h3>
   <h4 align="center">School Project</h4>
