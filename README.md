@@ -23,6 +23,8 @@
 
 - **HTML/CSS** are the foundational technologies for building and designing web pages. HTML (HyperText Markup Language) provides the structure of a webpage, while CSS (Cascading Style Sheets) handles the presentation and layout. Together, they enable the creation of responsive and visually appealing web interfaces.
 
+- **JavaScript** is a versatile programming language that enables interactive and dynamic functionality on web pages. It allows developers to create features like form validation, animations, and asynchronous content loading. JavaScript is essential for building modern web applications and works seamlessly with HTML and CSS to create a complete user experience.
+
 - **Vanilla JavaScript** is a term for using plain JavaScript without any additional libraries or frameworks. It allows for a deep understanding of core JavaScript concepts and provides full control over the code, ensuring high performance and minimal overhead.
 
 - [**Node.js**](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs) is a JavaScript runtime built on Chrome's V8 JavaScript engine. It allows developers to build scalable network applications using JavaScript on the server side. Node.js is known for its event-driven, non-blocking I/O model, which makes it lightweight and efficient for developing data-intensive real-time applications.
