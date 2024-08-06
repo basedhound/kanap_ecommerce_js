@@ -25,13 +25,13 @@
 
 - **Vanilla JavaScript** is a term for using plain JavaScript without any additional libraries or frameworks. It allows for a deep understanding of core JavaScript concepts and provides full control over the code, ensuring high performance and minimal overhead.
 
-- **Node.js** is a JavaScript runtime built on Chrome's V8 JavaScript engine. It allows developers to build scalable network applications using JavaScript on the server side. Node.js is known for its event-driven, non-blocking I/O model, which makes it lightweight and efficient for developing data-intensive real-time applications.
+- [**Node.js**](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs) is a JavaScript runtime built on Chrome's V8 JavaScript engine. It allows developers to build scalable network applications using JavaScript on the server side. Node.js is known for its event-driven, non-blocking I/O model, which makes it lightweight and efficient for developing data-intensive real-time applications.
 
-- **Express** is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. It simplifies the development of server-side applications, offering tools for handling HTTP requests, middleware for additional functionality, and routing for defining application endpoints.
+- [**Express**](https://expressjs.com/en/starter/installing.html) is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. It simplifies the development of server-side applications, offering tools for handling HTTP requests, middleware for additional functionality, and routing for defining application endpoints.
 
-- **localStorage** is a web storage API that allows developers to store data persistently in the user's browser. It provides a way to save key-value pairs in a web application, ensuring data is available even after the browser is closed and reopened. This is particularly useful for maintaining user sessions, storing preferences, and managing shopping carts.
+- [**localStorage**](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) is a web storage API that allows developers to store data persistently in the user's browser. It provides a way to save key-value pairs in a web application, ensuring data is available even after the browser is closed and reopened. This is particularly useful for maintaining user sessions, storing preferences, and managing shopping carts.
 
-- **REGEX** (Regular Expressions) are sequences of characters that define search patterns. They are used for pattern matching within strings, making them a powerful tool for validating input, searching and replacing text, and extracting specific data from strings. In web development, REGEX is commonly used for form validation to ensure user input meets specific criteria.
+- [**REGEX**](https://en.wikipedia.org/wiki/Regular_expression) (Regular Expressions) are sequences of characters that define search patterns. They are used for pattern matching within strings, making them a powerful tool for validating input, searching and replacing text, and extracting specific data from strings. In web development, REGEX is commonly used for form validation to ensure user input meets specific criteria.
 
 ## <br/> <a name="features">📝 Features</a>
 👉 **Responsive Design**: Ensures the website is fully functional and visually appealing across all devices.
